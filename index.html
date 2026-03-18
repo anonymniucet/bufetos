@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ŠkolníSvačiny</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── CONFIG BANNER ── */
+  .config-banner {
+    background: #fff3cd; border-bottom: 2px solid #ffc107;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.82rem; color: #856404;
+    text-align: center; font-weight: 500;
+    position: sticky; top: 0; z-index: 200;
+  }
+  .config-banner a { color: #856404; font-weight: 700; }
+  .config-banner.hidden { display: none; }
+
+:root {
+–green-dark: #1a3a2a;
+–green-mid: #2d6a4f;
+–green-main: #40916c;
+–green-light: #74c69d;
+–green-pale: #b7e4c7;
+–green-mist: #d8f3dc;
+–green-foam: #f0faf3;
+–white: #ffffff;
+–cream: #fdfff9;
+–text-dark: #0d2318;
+–text-mid: #2d5a3d;
+–shadow: rgba(26, 58, 42, 0.12);
+}
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: ‘DM Sans’, sans-serif; background: var(–cream); color: var(–text-dark); min-height: 100vh; overflow-x: hidden; }
+  body::before { content:’’; position:fixed; top:-200px; right:-200px; width:600px; height:600px; background:radial-gradient(circle,var(–green-mist) 0%,transparent 70%); pointer-events:none; z-index:0; }
+  body::after { content:’’; position:fixed; bottom:-150px; left:-150px; width:500px; height:500px; background:radial-gradient(circle,var(–green-pale) 0%,transparent 70%); pointer-events:none; z-index:0; }
+
+/* HEADER */
+header { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(–green-pale); padding:0 2rem; display:flex; align-items:center; justify-content:space-between; height:70px; box-shadow:0 2px 20px var(–shadow); }
+.logo { display:flex; align-items:center; gap:10px; font-family:‘Fraunces’,serif; font-size:1.5rem; font-weight:900; color:var(–green-dark); text-decoration:none; }
+.logo-icon { width:38px; height:38px; background:var(–green-main); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+.logo span { color:var(–green-main); }
+.header-right { display:flex; align-items:center; gap:0.75rem; }
+.cart-btn { position:relative; background:var(–green-dark); color:white; border:none; cursor:pointer; padding:0.5rem 1.2rem; border-radius:100px; font-family:‘DM Sans’,sans-serif; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px; transition:all 0.2s; }
+.cart-btn:hover { background:var(–green-mid); transform:translateY(-1px); }
+.cart-count { background:var(–green-light); color:var(–green-dark); width:22px; height:22px; border-radius:50%; font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.admin-btn { background:transparent; border:1.5px solid var(–green-pale); color:var(–text-mid); cursor:pointer; padding:0.5rem 1rem; border-radius:100px; font-family:‘DM Sans’,sans-serif; font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:6px; transition:all 0.2s; }
+.admin-btn:hover { border-color:var(–green-main); color:var(–green-main); }
+
+/* HERO */
+.hero { position:relative; z-index:1; padding:4rem 2rem 3rem; text-align:center; }
+.hero-badge { display:inline-flex; align-items:center; gap:6px; background:var(–green-mist); color:var(–green-mid); border:1px solid var(–green-pale); padding:0.35rem 1rem; border-radius:100px; font-size:0.8rem; font-weight:600; letter-spacing:0.5px; margin-bottom:1.5rem; animation:fadeDown 0.6s ease both; }
+.hero h1 { font-family:‘Fraunces’,serif; font-size:clamp(2.5rem,6vw,4.5rem); font-weight:900; line-height:1.05; color:var(–green-dark); animation:fadeDown 0.6s 0.1s ease both; }
+.hero h1 em { font-style:italic; color:var(–green-main); }
+.hero p { margin:1rem auto 0; max-width:460px; color:var(–text-mid); font-size:1.05rem; line-height:1.6; animation:fadeDown 0.6s 0.2s ease both; }
+
+/* DAY SELECTOR */
+.day-section { position:relative; z-index:1; padding:0 2rem 2rem; max-width:900px; margin:0 auto; }
+.day-label { font-size:0.8rem; font-weight:600; color:var(–green-mid); letter-spacing:1px; text-transform:uppercase; margin-bottom:0.75rem; }
+.days { display:flex; gap:0.6rem; flex-wrap:wrap; }
+.day-btn { padding:0.5rem 1.1rem; border-radius:100px; border:1.5px solid var(–green-pale); background:white; color:var(–text-mid); font-family:‘DM Sans’,sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+.day-btn:hover { border-color:var(–green-main); color:var(–green-main); }
+.day-btn.active { background:var(–green-dark); border-color:var(–green-dark); color:white; }
+
+/* MENU GRID */
+.menu-section { position:relative; z-index:1; padding:0 2rem 3rem; max-width:900px; margin:0 auto; }
+.section-title { font-family:‘Fraunces’,serif; font-size:1.6rem; font-weight:700; color:var(–green-dark); margin-bottom:1.25rem; }
+.divider { width:48px; height:3px; background:var(–green-light); border-radius:2px; margin:0.5rem 0 1.25rem; }
+.menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.25rem; }
+.card { background:white; border-radius:20px; overflow:hidden; border:1px solid var(–green-pale); box-shadow:0 4px 20px var(–shadow); transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); animation:fadeUp 0.5s ease both; }
+.card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(26,58,42,0.18); }
+.card-emoji { background:var(–green-foam); height:130px; display:flex; align-items:center; justify-content:center; font-size:3.5rem; position:relative; overflow:hidden; }
+.card-emoji::after { content:’’; position:absolute; bottom:0; left:0; right:0; height:30px; background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.8)); }
+.card-size-badge { position:absolute; top:10px; right:10px; background:var(–green-main); color:white; font-size:0.65rem; font-weight:700; letter-spacing:0.5px; padding:3px 8px; border-radius:100px; text-transform:uppercase; }
+.card-size-badge.large { background:var(–green-dark); }
+.card-body { padding:1rem 1.1rem 1.1rem; }
+.card-name { font-family:‘Fraunces’,serif; font-size:1.1rem; font-weight:700; color:var(–green-dark); margin-bottom:0.25rem; }
+.card-desc { font-size:0.82rem; color:#6b8f79; line-height:1.4; margin-bottom:0.85rem; }
+.card-footer { display:flex; align-items:center; justify-content:space-between; }
+.card-price { font-family:‘Fraunces’,serif; font-size:1.3rem; font-weight:900; color:var(–green-main); }
+.card-price span { font-size:0.75rem; color:var(–text-mid); font-family:‘DM Sans’,sans-serif; font-weight:400; }
+.add-btn { width:36px; height:36px; border-radius:50%; background:var(–green-dark); color:white; border:none; cursor:pointer; font-size:1.3rem; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.add-btn:hover { background:var(–green-main); transform:scale(1.1) rotate(90deg); }
+.add-btn.added { background:var(–green-light); color:var(–green-dark); }
+.stock-info { font-size:0.75rem; color:#9abda8; margin-top:0.4rem; }
+.stock-low { color:#e07a5f; }
+
+/* CART SIDEBAR */
+.overlay { position:fixed; inset:0; background:rgba(13,35,24,0.4); backdrop-filter:blur(4px); z-index:200; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+.overlay.open { opacity:1; pointer-events:all; }
+.cart-sidebar { position:fixed; top:0; right:0; width:min(420px,100vw); height:100vh; background:white; z-index:201; transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.34,1.2,0.64,1); display:flex; flex-direction:column; box-shadow:-8px 0 40px rgba(13,35,24,0.15); }
+.cart-sidebar.open { transform:translateX(0); }
+.cart-header { padding:1.5rem; border-bottom:1px solid var(–green-mist); display:flex; align-items:center; justify-content:space-between; }
+.cart-header h2 { font-family:‘Fraunces’,serif; font-size:1.4rem; font-weight:700; color:var(–green-dark); }
+.close-btn { width:36px; height:36px; border-radius:50%; border:1.5px solid var(–green-pale); background:transparent; cursor:pointer; font-size:1rem; color:var(–text-mid); display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.close-btn:hover { background:var(–green-mist); }
+.cart-items { flex:1; overflow-y:auto; padding:1rem 1.5rem; }
+.cart-empty { text-align:center; padding:3rem 1rem; }
+.cart-empty .empty-icon { font-size:3rem; margin-bottom:1rem; }
+.cart-empty p { color:var(–text-mid); font-size:0.95rem; }
+.cart-item { display:flex; align-items:center; gap:0.8rem; padding:0.85rem 0; border-bottom:1px solid var(–green-foam); }
+.ci-emoji { width:46px; height:46px; background:var(–green-foam); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+.ci-info { flex:1; }
+.ci-name { font-weight:600; font-size:0.9rem; color:var(–green-dark); }
+.ci-day { font-size:0.75rem; color:#9abda8; }
+.ci-price { font-family:‘Fraunces’,serif; font-weight:700; color:var(–green-main); font-size:1rem; }
+.ci-qty { display:flex; align-items:center; gap:6px; }
+.qty-btn { width:26px; height:26px; border-radius:50%; border:1.5px solid var(–green-pale); background:transparent; cursor:pointer; font-size:0.9rem; color:var(–text-mid); display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.qty-btn:hover { background:var(–green-mist); border-color:var(–green-main); }
+.qty-num { font-weight:700; font-size:0.9rem; min-width:20px; text-align:center; }
+.cart-footer { padding:1.25rem 1.5rem; border-top:1px solid var(–green-mist); }
+.cart-total { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.ct-label { font-weight:600; color:var(–text-mid); }
+.ct-amount { font-family:‘Fraunces’,serif; font-size:1.6rem; font-weight:900; color:var(–green-dark); }
+.name-input-wrap { margin-bottom:1rem; }
+.name-input-wrap label { display:block; font-size:0.8rem; font-weight:600; color:var(–text-mid); margin-bottom:0.4rem; letter-spacing:0.3px; }
+.name-input-wrap input { width:100%; padding:0.65rem 1rem; border:1.5px solid var(–green-pale); border-radius:12px; font-family:‘DM Sans’,sans-serif; font-size:0.95rem; color:var(–text-dark); outline:none; transition:border-color 0.2s; }
+.name-input-wrap input:focus { border-color:var(–green-main); }
+.reserve-btn { width:100%; padding:0.9rem; background:var(–green-dark); color:white; border:none; cursor:pointer; border-radius:14px; font-family:‘Fraunces’,serif; font-size:1.05rem; font-weight:700; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.reserve-btn:hover { background:var(–green-main); transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,58,42,0.3); }
+.reserve-btn:disabled { background:var(–green-pale); color:var(–green-mid); cursor:not-allowed; transform:none; }
+.sending-spinner { display:none; }
+.reserve-btn.sending .sending-spinner { display:inline; }
+.reserve-btn.sending .btn-text { display:none; }
+
+/* RESERVATIONS (student view) */
+.reservations-section { position:relative; z-index:1; padding:0 2rem 4rem; max-width:900px; margin:0 auto; }
+.res-card { background:white; border:1px solid var(–green-pale); border-radius:16px; padding:1rem 1.25rem; display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; box-shadow:0 2px 12px var(–shadow); transition:all 0.2s; animation:fadeUp 0.4s ease both; }
+.res-card:hover { border-color:var(–green-light); }
+.res-num { width:38px; height:38px; background:var(–green-dark); color:white; border-radius:10px; font-family:‘Fraunces’,serif; font-weight:900; font-size:0.9rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.res-info { flex:1; }
+.res-name { font-weight:700; font-size:0.95rem; color:var(–green-dark); }
+.res-detail { font-size:0.75rem; color:#9abda8; margin-top:2px; }
+.res-items { font-size:0.82rem; color:var(–text-mid); margin-top:4px; }
+.res-price { font-family:‘Fraunces’,serif; font-weight:900; font-size:1.1rem; color:var(–green-main); flex-shrink:0; }
+.res-delete { width:30px; height:30px; border-radius:8px; border:1px solid var(–green-pale); background:transparent; cursor:pointer; color:#c0b0b0; font-size:0.8rem; display:flex; align-items:center; justify-content:center; transition:all 0.2s; flex-shrink:0; }
+.res-delete:hover { background:#fff0f0; border-color:#e07a5f; color:#e07a5f; }
+.no-res { text-align:center; padding:2.5rem; background:white; border:1.5px dashed var(–green-pale); border-radius:16px; color:var(–text-mid); font-size:0.95rem; }
+
+/* ── ADMIN MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(13,35,24,0.55); backdrop-filter:blur(6px); z-index:300; display:none; align-items:center; justify-content:center; padding:1rem; }
+.modal-overlay.open { display:flex; }
+.modal { background:white; border-radius:24px; width:100%; max-width:680px; max-height:90vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(13,35,24,0.25); animation:fadeUp 0.35s ease; }
+.modal-head { padding:1.5rem; border-bottom:1px solid var(–green-mist); display:flex; align-items:center; justify-content:space-between; }
+.modal-head h2 { font-family:‘Fraunces’,serif; font-size:1.4rem; font-weight:700; color:var(–green-dark); }
+.modal-body { flex:1; overflow-y:auto; padding:1.5rem; }
+
+/* LOGIN */
+.login-form { max-width:320px; margin:2rem auto; text-align:center; }
+.login-form .lock-icon { font-size:3rem; margin-bottom:1rem; }
+.login-form h3 { font-family:‘Fraunces’,serif; font-size:1.3rem; color:var(–green-dark); margin-bottom:0.4rem; }
+.login-form p { font-size:0.85rem; color:var(–text-mid); margin-bottom:1.5rem; }
+.login-form input { width:100%; padding:0.7rem 1rem; border:1.5px solid var(–green-pale); border-radius:12px; font-family:‘DM Sans’,sans-serif; font-size:1rem; outline:none; margin-bottom:0.75rem; transition:border-color 0.2s; }
+.login-form input:focus { border-color:var(–green-main); }
+.login-form input.error { border-color:#e07a5f; }
+.login-btn { width:100%; padding:0.8rem; background:var(–green-dark); color:white; border:none; cursor:pointer; border-radius:12px; font-family:‘Fraunces’,serif; font-size:1rem; font-weight:700; transition:all 0.2s; }
+.login-btn:hover { background:var(–green-main); }
+.login-error { color:#e07a5f; font-size:0.8rem; margin-top:0.5rem; display:none; }
+
+/* ADMIN PANEL */
+.admin-panel { display:none; }
+.admin-panel.visible { display:block; }
+.admin-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; margin-bottom:1.5rem; }
+.stat-box { background:var(–green-foam); border:1px solid var(–green-pale); border-radius:14px; padding:1rem; text-align:center; }
+.stat-num { font-family:‘Fraunces’,serif; font-size:1.8rem; font-weight:900; color:var(–green-dark); }
+.stat-label { font-size:0.75rem; color:var(–text-mid); margin-top:2px; }
+.admin-filter { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+.filter-btn { padding:0.35rem 0.9rem; border-radius:100px; border:1.5px solid var(–green-pale); background:white; color:var(–text-mid); font-family:‘DM Sans’,sans-serif; font-size:0.8rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+.filter-btn:hover { border-color:var(–green-main); color:var(–green-main); }
+.filter-btn.active { background:var(–green-dark); border-color:var(–green-dark); color:white; }
+.admin-res-card { background:var(–green-foam); border:1px solid var(–green-pale); border-radius:14px; padding:1rem 1.1rem; margin-bottom:0.6rem; }
+.arc-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem; }
+.arc-name { font-weight:700; color:var(–green-dark); font-size:0.95rem; }
+.arc-id { font-size:0.75rem; color:#9abda8; }
+.arc-price { font-family:‘Fraunces’,serif; font-weight:900; color:var(–green-main); }
+.arc-items { font-size:0.82rem; color:var(–text-mid); }
+.arc-meta { font-size:0.75rem; color:#9abda8; margin-top:4px; }
+.arc-day-badge { display:inline-block; background:var(–green-pale); color:var(–green-dark); padding:2px 8px; border-radius:100px; font-size:0.72rem; font-weight:600; margin-right:4px; }
+.admin-empty { text-align:center; padding:2rem; color:var(–text-mid); }
+.logout-btn { margin-top:1rem; background:transparent; border:1.5px solid var(–green-pale); color:var(–text-mid); padding:0.5rem 1rem; border-radius:10px; cursor:pointer; font-family:‘DM Sans’,sans-serif; font-size:0.85rem; font-weight:600; transition:all 0.2s; }
+.logout-btn:hover { border-color:#e07a5f; color:#e07a5f; }
+
+/* TOAST */
+.toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(–green-dark); color:white; padding:0.85rem 1.5rem; border-radius:100px; font-weight:600; font-size:0.9rem; box-shadow:0 8px 30px rgba(13,35,24,0.3); z-index:999; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.error { background:#c0392b; }
+
+@keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@media(max-width:600px){.hero{padding:2.5rem 1.25rem 2rem}.day-section,.menu-section,.reservations-section{padding-left:1.25rem;padding-right:1.25rem}header{padding:0 1.25rem}.admin-stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+
+</head>
+<body>
+
+<!-- CONFIG BANNER -->
+
+<div class="config-banner" id="configBanner">
+  ⚠️ <strong>Nastavení EmailJS:</strong> Otevři zdrojový kód a doplň <code>EMAILJS_SERVICE_ID</code>, <code>EMAILJS_TEMPLATE_ID</code> a <code>EMAILJS_PUBLIC_KEY</code>. 
+  <a href="https://emailjs.com" target="_blank">emailjs.com →</a>
+</div>
+
+<!-- HEADER -->
+
+<header>
+  <a class="logo" href="#"><div class="logo-icon">🥪</div>Školní<span>Svačiny</span></a>
+  <div class="header-right">
+    <button class="admin-btn" onclick="openAdmin()">🔐 Admin</button>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Košík <span class="cart-count" id="cartCount">0</span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="hero-badge">🌿 Čerstvé každý den</div>
+  <h1>Objednej si <em>svačinu</em><br>na celý týden</h1>
+  <p>Vyber den, zvol svačinu a rezervuj. Vyzvednutí v přestávce u školního bufetu.</p>
+</section>
+
+<!-- DAY SELECTOR -->
+
+<div class="day-section">
+  <div class="day-label">📅 Vyber den</div>
+  <div class="days" id="days"></div>
+</div>
+
+<!-- MENU -->
+
+<div class="menu-section">
+  <div class="section-title">Dnešní nabídka</div>
+  <div class="divider"></div>
+  <div class="menu-grid" id="menuGrid"></div>
+</div>
+
+<!-- STUDENT RESERVATIONS -->
+
+<div class="reservations-section">
+  <div class="section-title">Moje rezervace</div>
+  <div class="divider"></div>
+  <div id="reservationsList"></div>
+</div>
+
+<!-- CART OVERLAY -->
+
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+
+<!-- CART SIDEBAR -->
+
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h2>🛒 Košík</h2>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span class="ct-label">Celkem</span>
+      <span class="ct-amount" id="cartTotal">0 Kč</span>
+    </div>
+    <div class="name-input-wrap">
+      <label>Tvoje jméno & třída</label>
+      <input type="text" id="studentName" placeholder="např. Jana Nováková, 8.B" />
+    </div>
+    <button class="reserve-btn" id="reserveBtn" onclick="confirmReservation()" disabled>
+      <span class="btn-text">✅ Potvrdit rezervaci</span>
+      <span class="sending-spinner">⏳ Odesílám...</span>
+    </button>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">🔐 Admin panel</h2>
+      <button class="close-btn" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- login form injected here -->
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  ⚙️  KONFIGURACE – DOPLŇ SVOJE HODNOTY Z EMAILJS
+// ══════════════════════════════════════════════════
+const EMAILJS_SERVICE_ID  = 'service_xubh9sh';   // např. 'service_abc123'
+const EMAILJS_TEMPLATE_ID = 'template_nwe34pn';  // např. 'template_xyz789'
+const EMAILJS_PUBLIC_KEY  = '5EtQMEMwJV2JB6RyY';     // např. 'abcDEF123456'
+
+const ADMIN_PASSWORD = 'kantyna2024';  // ← změň si heslo!
+// ══════════════════════════════════════════════════
+
+const CONFIGURED = !EMAILJS_SERVICE_ID.startsWith('TVOJE');
+if (CONFIGURED) {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+  document.getElementById('configBanner').classList.add('hidden');
+}
+
+// ── DATA ──────────────────────────────────────────
+const DAYS = ['Pondělí','Úterý','Středa','Čtvrtek','Pátek'];
+const today = new Date().getDay();
+let selectedDay = (today>=1&&today<=5) ? today-1 : 0;
+
+const MENU = [
+  {id:1,name:'Svačina',emoji:'🥪',desc:'Čerstvá denní svačina připravená ráno',price:20,size:'malá',stock:20},
+  {id:2,name:'Velká svačina',emoji:'🍱',desc:'Větší porce pro větší hlad – vydatná a chutná',price:50,size:'velká',stock:20},
+  {id:3,name:'Malá šťáva',emoji:'🧃',desc:'Čerstvě lisovaná šťáva 10ml – rychlé osvěžení',price:130,size:'malá',stock:20},
+  {id:4,name:'Velká šťáva',emoji:'🍹',desc:'Čerstvě lisovaná šťáva 30ml – pořádná dávka vitamínů',price:220,size:'velká',stock:20},
+  {id:5,name:'Obyčejná hlava',emoji:'🫙',desc:'Klasická hlava – osvědčená volba',price:90,size:'malá',stock:20},
+  {id:6,name:'Lepší hlava',emoji:'⭐',desc:'Prémiová hlava – o stupeň výš',price:110,size:'velká',stock:20},
+];
+
+let cart = [];
+let reservations = JSON.parse(localStorage.getItem('svaciny_reservations') || '[]');
+let resCounter = reservations.length ? Math.max(...reservations.map(r=>r.id))+1 : 1;
+let adminLoggedIn = false;
+let adminFilter = 'all';
+
+// ── INIT ──────────────────────────────────────────
+function init() { renderDays(); renderMenu(); renderReservations(); }
+
+// ── DAYS ──────────────────────────────────────────
+function renderDays() {
+  document.getElementById('days').innerHTML = DAYS.map((d,i)=>
+    `<button class="day-btn ${i===selectedDay?'active':''}" onclick="selectDay(${i})">${d}</button>`
+  ).join('');
+}
+function selectDay(i) { selectedDay=i; renderDays(); renderMenu(); }
+
+// ── MENU ──────────────────────────────────────────
+function renderMenu() {
+  document.getElementById('menuGrid').innerHTML = MENU.map((item,idx)=>{
+    const inCart = cart.some(c=>c.id===item.id&&c.day===selectedDay);
+    return `
+    <div class="card" style="animation-delay:${idx*0.06}s">
+      <div class="card-emoji">
+        ${item.emoji}
+        <div class="card-size-badge ${item.size==='velká'?'large':''}">${item.size}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${item.name}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="stock-info ${item.stock<=6?'stock-low':''}">
+          ${item.stock<=6?'⚠️':'✓'} ${item.stock} ks zbývá
+        </div>
+        <div class="card-footer" style="margin-top:0.7rem">
+          <div class="card-price">${item.price} Kč <span>/ ks</span></div>
+          <button class="add-btn ${inCart?'added':''}" onclick="addToCart(${item.id})">
+            ${inCart?'✓':'+'}
+          </button>
+        </div>
+      </div>
+    </div>`
+  }).join('');
+}
+
+// ── CART ──────────────────────────────────────────
+function addToCart(itemId) {
+  const item = MENU.find(m=>m.id===itemId);
+  const existing = cart.find(c=>c.id===itemId&&c.day===selectedDay);
+  if (existing) existing.qty=(existing.qty||1)+1;
+  else cart.push({...item,day:selectedDay,dayName:DAYS[selectedDay],qty:1});
+  updateCartUI(); renderMenu();
+  showToast(`${item.emoji} ${item.name} přidána!`);
+}
+function removeFromCart(itemId,day) {
+  cart=cart.filter(c=>!(c.id===itemId&&c.day===day));
+  updateCartUI(); renderMenu();
+}
+function changeQty(itemId,day,delta) {
+  const item=cart.find(c=>c.id===itemId&&c.day===day);
+  if(!item)return;
+  item.qty=(item.qty||1)+delta;
+  if(item.qty<=0) removeFromCart(itemId,day);
+  else updateCartUI();
+}
+function updateCartUI() {
+  const total=cart.reduce((s,c)=>s+c.price*(c.qty||1),0);
+  const count=cart.reduce((s,c)=>s+(c.qty||1),0);
+  document.getElementById('cartCount').textContent=count;
+  document.getElementById('cartTotal').textContent=total+' Kč';
+  const itemsEl=document.getElementById('cartItems');
+  if(cart.length===0){
+    itemsEl.innerHTML=`<div class="cart-empty"><div class="empty-icon">🥗</div><p>Košík je prázdný.<br>Vyber si svačinu!</p></div>`;
+  } else {
+    itemsEl.innerHTML=cart.map(c=>`
+      <div class="cart-item">
+        <div class="ci-emoji">${c.emoji}</div>
+        <div class="ci-info">
+          <div class="ci-name">${c.name}</div>
+          <div class="ci-day">${c.dayName}</div>
+          <div class="ci-price">${c.price*(c.qty||1)} Kč</div>
+        </div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${c.id},${c.day},-1)">−</button>
+          <span class="qty-num">${c.qty||1}</span>
+          <button class="qty-btn" onclick="changeQty(${c.id},${c.day},1)">+</button>
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('reserveBtn').disabled=cart.length===0;
+}
+function toggleCart() {
+  const sb=document.getElementById('cartSidebar');
+  const ov=document.getElementById('overlay');
+  sb.classList.toggle('open'); ov.classList.toggle('open');
+  document.body.style.overflow=sb.classList.contains('open')?'hidden':'';
+  updateCartUI();
+}
+
+// ── RESERVATION ───────────────────────────────────
+async function confirmReservation() {
+  const name=document.getElementById('studentName').value.trim();
+  if(!name){
+    const inp=document.getElementById('studentName');
+    inp.style.borderColor='#e07a5f'; inp.focus();
+    setTimeout(()=>inp.style.borderColor='',1500); return;
+  }
+  const total=cart.reduce((s,c)=>s+c.price*(c.qty||1),0);
+  const now=new Date();
+  const time=now.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'});
+  const date=now.toLocaleDateString('cs-CZ');
+  const id=resCounter++;
+
+  const reservation={id,name,items:[...cart],total,time,date};
+  reservations.push(reservation);
+  localStorage.setItem('svaciny_reservations',JSON.stringify(reservations));
+
+  // Send email
+  if(CONFIGURED){
+    const btn=document.getElementById('reserveBtn');
+    btn.classList.add('sending'); btn.disabled=true;
+    const itemsList=cart.map(c=>`• ${c.qty}× ${c.name} (${c.dayName}) – ${c.price*c.qty} Kč`).join('\n');
+    const message=`🧾 NOVÁ REZERVACE #${id}\n\nJméno žáka: ${name}\nDatum: ${date} v ${time}\n\nObjednávka:\n${itemsList}\n\n💰 Celkem: ${total} Kč\n\n---\nŠkolní Svačiny`;
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        reservation_id: id,
+        student_name: name,
+        message,
+        total: total+' Kč',
+        date,
+        time
+      });
+      showToast('🎉 Rezervace potvrzena a email odeslán!');
+    } catch(e) {
+      showToast('⚠️ Rezervace uložena, email se nepodařilo odeslat', true);
+    }
+    btn.classList.remove('sending'); btn.disabled=false;
+  } else {
+    showToast('🎉 Rezervace uložena! (Email není nakonfigurován)');
+  }
+
+  cart=[];
+  updateCartUI();
+  toggleCart();
+  renderReservations();
+  renderMenu();
+}
+
+// ── STUDENT RESERVATIONS ──────────────────────────
+function renderReservations() {
+  const el=document.getElementById('reservationsList');
+  if(reservations.length===0){
+    el.innerHTML=`<div class="no-res">🍃 Zatím žádné rezervace. Přidej svačinu do košíku!</div>`; return;
+  }
+  el.innerHTML=reservations.slice().reverse().map((r,i)=>{
+    const itemsText=r.items.map(c=>`${c.qty}× ${c.name} (${c.dayName})`).join(', ');
+    return `
+    <div class="res-card" style="animation-delay:${i*0.05}s">
+      <div class="res-num">#${r.id}</div>
+      <div class="res-info">
+        <div class="res-name">${r.name}</div>
+        <div class="res-detail">Rezervováno ${r.date} v ${r.time}</div>
+        <div class="res-items">${itemsText}</div>
+      </div>
+      <div class="res-price">${r.total} Kč</div>
+      <button class="res-delete" onclick="deleteReservation(${r.id})" title="Zrušit">🗑</button>
+    </div>`
+  }).join('');
+}
+function deleteReservation(id) {
+  reservations=reservations.filter(r=>r.id!==id);
+  localStorage.setItem('svaciny_reservations',JSON.stringify(reservations));
+  renderReservations();
+  if(adminLoggedIn) renderAdminPanel();
+  showToast('🗑 Rezervace zrušena');
+}
+
+// ── ADMIN ─────────────────────────────────────────
+function openAdmin() {
+  document.getElementById('adminModal').classList.add('open');
+  if(adminLoggedIn) renderAdminPanel();
+  else renderLoginForm();
+}
+function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
+
+function renderLoginForm() {
+  document.getElementById('modalTitle').textContent='🔐 Admin panel';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="login-form">
+      <div class="lock-icon">🔒</div>
+      <h3>Přihlášení</h3>
+      <p>Zadej heslo pro přístup do administrace kantýny</p>
+      <input type="password" id="adminPwd" placeholder="Heslo" onkeydown="if(event.key==='Enter')checkLogin()" />
+      <button class="login-btn" onclick="checkLogin()">Přihlásit se</button>
+      <div class="login-error" id="loginError">❌ Špatné heslo, zkus to znovu</div>
+    </div>`;
+}
+
+function checkLogin() {
+  const pwd=document.getElementById('adminPwd').value;
+  if(pwd===ADMIN_PASSWORD){
+    adminLoggedIn=true;
+    renderAdminPanel();
+  } else {
+    document.getElementById('adminPwd').classList.add('error');
+    document.getElementById('loginError').style.display='block';
+  }
+}
+
+function renderAdminPanel() {
+  document.getElementById('modalTitle').textContent='📋 Přehled rezervací';
+  const filtered = adminFilter==='all' ? reservations :
+    reservations.filter(r=>r.items.some(i=>i.day===parseInt(adminFilter)));
+
+  const totalRevenue=reservations.reduce((s,r)=>s+r.total,0);
+  const totalItems=reservations.reduce((s,r)=>s+r.items.reduce((ss,i)=>ss+(i.qty||1),0),0);
+
+  document.getElementById('modalBody').innerHTML=`
+    <div class="admin-stats">
+      <div class="stat-box"><div class="stat-num">${reservations.length}</div><div class="stat-label">Rezervací</div></div>
+      <div class="stat-box"><div class="stat-num">${totalItems}</div><div class="stat-label">Svačin</div></div>
+      <div class="stat-box"><div class="stat-num">${totalRevenue} Kč</div><div class="stat-label">Celkem</div></div>
+    </div>
+    <div class="admin-filter">
+      <button class="filter-btn ${adminFilter==='all'?'active':''}" onclick="setFilter('all')">Všechny dny</button>
+      ${DAYS.map((d,i)=>`<button class="filter-btn ${adminFilter==i?'active':''}" onclick="setFilter(${i})">${d}</button>`).join('')}
+    </div>
+    <div id="adminResList">
+      ${filtered.length===0
+        ? '<div class="admin-empty">🍃 Žádné rezervace pro tento den</div>'
+        : filtered.slice().reverse().map(r=>{
+          const itemsText=r.items.map(c=>`<span class="arc-day-badge">${c.dayName}</span>${c.qty}× ${c.name}`).join(' · ');
+          return `
+          <div class="admin-res-card">
+            <div class="arc-top">
+              <div>
+                <span class="arc-name">${r.name}</span>
+                <span class="arc-id"> · #${r.id}</span>
+              </div>
+              <div class="arc-price">${r.total} Kč</div>
+            </div>
+            <div class="arc-items">${itemsText}</div>
+            <div class="arc-meta">📅 ${r.date} v ${r.time}
+              <button style="margin-left:8px;background:transparent;border:none;cursor:pointer;color:#e07a5f;font-size:0.8rem" onclick="deleteReservation(${r.id})">🗑 Zrušit</button>
+            </div>
+          </div>`
+        }).join('')
+      }
+    </div>
+    <button class="logout-btn" onclick="adminLogout()">🚪 Odhlásit se</button>`;
+}
+
+function setFilter(f) { adminFilter=f; renderAdminPanel(); }
+function adminLogout() { adminLoggedIn=false; renderLoginForm(); }
+
+// ── TOAST ─────────────────────────────────────────
+function showToast(msg, isError=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(isError?' error':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script>
+
+</body>
+</html>
