@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* {margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box}
 :root{--g:#2d6a4f;--gl:#52b788;--gp:#d8f3dc;--gm:#f0faf3;--b:#e8e8e8;--red:#c0392b;--gold:#b5840a}
 body{font-family:'Outfit',sans-serif;background:#fff;color:#111;min-height:100vh}
 header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--b);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
@@ -322,6 +322,7 @@ var EJS_SVC  = ‘service_xubh9sh’;
 var EJS_TMPL = ‘template_nwe34pn’;
 var EJS_KEY  = ‘5EtQMEMwJV2JB6RyY’;
 var ADMIN_PW = ‘kantyna2024’;
+emailjs.init(EJS_KEY);
 
 var DNAMES = [‘Pondeli’,‘Utery’,‘Streda’,‘Ctvrtek’,‘Patek’];
 var BNAMES = [‘Mala prestávka’,‘Velka prestávka’];
@@ -547,9 +548,11 @@ lines.push(’- ‘+c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’)+�
 }
 var msg=‘REZERVACE #’+rid+’\nJmeno: ‘+nm+’\nDatum: ‘+dt+’ v ‘+tm+’\nPrestávka: ‘+brkLbl+’\n\n’+lines.join(’\n’)+’\n\nCelkem: ‘+tot+’ Kc’;
 emailjs.send(EJS_SVC,EJS_TMPL,{reservation_id:rid,student_name:nm,message:msg,total:tot+’ Kc’,date:dt,time:tm})
-.then(function(){ toast(‘Rezervace potvrzena!’,‘ok’); })
-.catch(function(){ toast(‘Rezervace ulozena (email selhal)’,‘err’); })
-.finally(function(){
+.then(function(){
+toast(‘Rezervace potvrzena!’,‘ok’);
+}, function(){
+toast(‘Rezervace ulozena (email selhal)’,‘err’);
+}).then(function(){
 orders.push(rec); sv(‘B_RES’,orders);
 cart=[]; updCart(); closeCart(); renderRes(); renderMenu();
 if(isAdmin) renderAdmin();
