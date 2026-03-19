@@ -4,286 +4,1020 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ŠkolníSvačiny</title>
+<title>Bufet — Školní svačiny</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* ── CONFIG BANNER ── */
-  .config-banner {
-    background: #fff3cd; border-bottom: 2px solid #ffc107;
-    padding: 0.6rem 1.5rem;
-    font-size: 0.82rem; color: #856404;
-    text-align: center; font-weight: 500;
-    position: sticky; top: 0; z-index: 200;
-  }
-  .config-banner a { color: #856404; font-weight: 700; }
-  .config-banner.hidden { display: none; }
-
+/* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
 :root {
-–green-dark: #1a3a2a;
-–green-mid: #2d6a4f;
-–green-main: #40916c;
-–green-light: #74c69d;
-–green-pale: #b7e4c7;
-–green-mist: #d8f3dc;
-–green-foam: #f0faf3;
-–white: #ffffff;
-–cream: #fdfff9;
-–text-dark: #0d2318;
-–text-mid: #2d5a3d;
-–shadow: rgba(26, 58, 42, 0.12);
+  --ink: #0e1a12;
+  --ink2: #1c2e20;
+  --forest: #1f3d28;
+  --moss: #2e5c3a;
+  --fern: #3d7a4d;
+  --sage: #6aaa7d;
+  --mint: #a8d5b5;
+  --foam: #d4edda;
+  --mist: #eef7f0;
+  --cream: #f7fbf7;
+  --white: #ffffff;
+  --gold: #c9a84c;
+  --gold-light: #e8cc7a;
+  --red: #c0392b;
+  --r: 20px;
+  --r2: 28px;
+  --shadow-soft: 0 8px 40px rgba(14,26,18,0.18);
+  --shadow-hard: 0 2px 0 rgba(14,26,18,0.3);
+  --t: 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
-- { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: ‘DM Sans’, sans-serif; background: var(–cream); color: var(–text-dark); min-height: 100vh; overflow-x: hidden; }
-  body::before { content:’’; position:fixed; top:-200px; right:-200px; width:600px; height:600px; background:radial-gradient(circle,var(–green-mist) 0%,transparent 70%); pointer-events:none; z-index:0; }
-  body::after { content:’’; position:fixed; bottom:-150px; left:-150px; width:500px; height:500px; background:radial-gradient(circle,var(–green-pale) 0%,transparent 70%); pointer-events:none; z-index:0; }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-/* HEADER */
-header { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(–green-pale); padding:0 2rem; display:flex; align-items:center; justify-content:space-between; height:70px; box-shadow:0 2px 20px var(–shadow); }
-.logo { display:flex; align-items:center; gap:10px; font-family:‘Fraunces’,serif; font-size:1.5rem; font-weight:900; color:var(–green-dark); text-decoration:none; }
-.logo-icon { width:38px; height:38px; background:var(–green-main); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
-.logo span { color:var(–green-main); }
-.header-right { display:flex; align-items:center; gap:0.75rem; }
-.cart-btn { position:relative; background:var(–green-dark); color:white; border:none; cursor:pointer; padding:0.5rem 1.2rem; border-radius:100px; font-family:‘DM Sans’,sans-serif; font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:8px; transition:all 0.2s; }
-.cart-btn:hover { background:var(–green-mid); transform:translateY(-1px); }
-.cart-count { background:var(–green-light); color:var(–green-dark); width:22px; height:22px; border-radius:50%; font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
-.admin-btn { background:transparent; border:1.5px solid var(–green-pale); color:var(–text-mid); cursor:pointer; padding:0.5rem 1rem; border-radius:100px; font-family:‘DM Sans’,sans-serif; font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:6px; transition:all 0.2s; }
-.admin-btn:hover { border-color:var(–green-main); color:var(–green-main); }
+html { scroll-behavior: smooth; }
 
-/* HERO */
-.hero { position:relative; z-index:1; padding:4rem 2rem 3rem; text-align:center; }
-.hero-badge { display:inline-flex; align-items:center; gap:6px; background:var(–green-mist); color:var(–green-mid); border:1px solid var(–green-pale); padding:0.35rem 1rem; border-radius:100px; font-size:0.8rem; font-weight:600; letter-spacing:0.5px; margin-bottom:1.5rem; animation:fadeDown 0.6s ease both; }
-.hero h1 { font-family:‘Fraunces’,serif; font-size:clamp(2.5rem,6vw,4.5rem); font-weight:900; line-height:1.05; color:var(–green-dark); animation:fadeDown 0.6s 0.1s ease both; }
-.hero h1 em { font-style:italic; color:var(–green-main); }
-.hero p { margin:1rem auto 0; max-width:460px; color:var(–text-mid); font-size:1.05rem; line-height:1.6; animation:fadeDown 0.6s 0.2s ease both; }
+body {
+font-family: ‘Syne’, sans-serif;
+background: var(–ink);
+color: var(–cream);
+min-height: 100vh;
+overflow-x: hidden;
+cursor: none;
+}
 
-/* DAY SELECTOR */
-.day-section { position:relative; z-index:1; padding:0 2rem 2rem; max-width:900px; margin:0 auto; }
-.day-label { font-size:0.8rem; font-weight:600; color:var(–green-mid); letter-spacing:1px; text-transform:uppercase; margin-bottom:0.75rem; }
-.days { display:flex; gap:0.6rem; flex-wrap:wrap; }
-.day-btn { padding:0.5rem 1.1rem; border-radius:100px; border:1.5px solid var(–green-pale); background:white; color:var(–text-mid); font-family:‘DM Sans’,sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
-.day-btn:hover { border-color:var(–green-main); color:var(–green-main); }
-.day-btn.active { background:var(–green-dark); border-color:var(–green-dark); color:white; }
+/* ── CUSTOM CURSOR ── */
+.cursor {
+position: fixed;
+width: 12px; height: 12px;
+background: var(–sage);
+border-radius: 50%;
+pointer-events: none;
+z-index: 9999;
+transform: translate(-50%,-50%);
+transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+mix-blend-mode: screen;
+}
+.cursor-ring {
+position: fixed;
+width: 36px; height: 36px;
+border: 1.5px solid var(–sage);
+border-radius: 50%;
+pointer-events: none;
+z-index: 9998;
+transform: translate(-50%,-50%);
+transition: transform 0.12s, width 0.25s, height 0.25s, opacity 0.2s;
+opacity: 0.5;
+}
+.cursor.hovered { width: 20px; height: 20px; background: var(–gold); }
+.cursor-ring.hovered { width: 54px; height: 54px; opacity: 0.25; border-color: var(–gold); }
 
-/* MENU GRID */
-.menu-section { position:relative; z-index:1; padding:0 2rem 3rem; max-width:900px; margin:0 auto; }
-.section-title { font-family:‘Fraunces’,serif; font-size:1.6rem; font-weight:700; color:var(–green-dark); margin-bottom:1.25rem; }
-.divider { width:48px; height:3px; background:var(–green-light); border-radius:2px; margin:0.5rem 0 1.25rem; }
-.menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.25rem; }
-.card { background:white; border-radius:20px; overflow:hidden; border:1px solid var(–green-pale); box-shadow:0 4px 20px var(–shadow); transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); animation:fadeUp 0.5s ease both; }
-.card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(26,58,42,0.18); }
-.card-emoji { background:var(–green-foam); height:130px; display:flex; align-items:center; justify-content:center; font-size:3.5rem; position:relative; overflow:hidden; }
-.card-emoji::after { content:’’; position:absolute; bottom:0; left:0; right:0; height:30px; background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.8)); }
-.card-size-badge { position:absolute; top:10px; right:10px; background:var(–green-main); color:white; font-size:0.65rem; font-weight:700; letter-spacing:0.5px; padding:3px 8px; border-radius:100px; text-transform:uppercase; }
-.card-size-badge.large { background:var(–green-dark); }
-.card-body { padding:1rem 1.1rem 1.1rem; }
-.card-name { font-family:‘Fraunces’,serif; font-size:1.1rem; font-weight:700; color:var(–green-dark); margin-bottom:0.25rem; }
-.card-desc { font-size:0.82rem; color:#6b8f79; line-height:1.4; margin-bottom:0.85rem; }
-.card-footer { display:flex; align-items:center; justify-content:space-between; }
-.card-price { font-family:‘Fraunces’,serif; font-size:1.3rem; font-weight:900; color:var(–green-main); }
-.card-price span { font-size:0.75rem; color:var(–text-mid); font-family:‘DM Sans’,sans-serif; font-weight:400; }
-.add-btn { width:36px; height:36px; border-radius:50%; background:var(–green-dark); color:white; border:none; cursor:pointer; font-size:1.3rem; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-.add-btn:hover { background:var(–green-main); transform:scale(1.1) rotate(90deg); }
-.add-btn.added { background:var(–green-light); color:var(–green-dark); }
-.stock-info { font-size:0.75rem; color:#9abda8; margin-top:0.4rem; }
-.stock-low { color:#e07a5f; }
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+content: ‘’;
+position: fixed; inset: 0;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘1’/%3E%3C/svg%3E”);
+opacity: 0.035;
+pointer-events: none;
+z-index: 1000;
+}
 
-/* CART SIDEBAR */
-.overlay { position:fixed; inset:0; background:rgba(13,35,24,0.4); backdrop-filter:blur(4px); z-index:200; opacity:0; pointer-events:none; transition:opacity 0.3s; }
-.overlay.open { opacity:1; pointer-events:all; }
-.cart-sidebar { position:fixed; top:0; right:0; width:min(420px,100vw); height:100vh; background:white; z-index:201; transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.34,1.2,0.64,1); display:flex; flex-direction:column; box-shadow:-8px 0 40px rgba(13,35,24,0.15); }
-.cart-sidebar.open { transform:translateX(0); }
-.cart-header { padding:1.5rem; border-bottom:1px solid var(–green-mist); display:flex; align-items:center; justify-content:space-between; }
-.cart-header h2 { font-family:‘Fraunces’,serif; font-size:1.4rem; font-weight:700; color:var(–green-dark); }
-.close-btn { width:36px; height:36px; border-radius:50%; border:1.5px solid var(–green-pale); background:transparent; cursor:pointer; font-size:1rem; color:var(–text-mid); display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-.close-btn:hover { background:var(–green-mist); }
-.cart-items { flex:1; overflow-y:auto; padding:1rem 1.5rem; }
-.cart-empty { text-align:center; padding:3rem 1rem; }
-.cart-empty .empty-icon { font-size:3rem; margin-bottom:1rem; }
-.cart-empty p { color:var(–text-mid); font-size:0.95rem; }
-.cart-item { display:flex; align-items:center; gap:0.8rem; padding:0.85rem 0; border-bottom:1px solid var(–green-foam); }
-.ci-emoji { width:46px; height:46px; background:var(–green-foam); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
-.ci-info { flex:1; }
-.ci-name { font-weight:600; font-size:0.9rem; color:var(–green-dark); }
-.ci-day { font-size:0.75rem; color:#9abda8; }
-.ci-price { font-family:‘Fraunces’,serif; font-weight:700; color:var(–green-main); font-size:1rem; }
-.ci-qty { display:flex; align-items:center; gap:6px; }
-.qty-btn { width:26px; height:26px; border-radius:50%; border:1.5px solid var(–green-pale); background:transparent; cursor:pointer; font-size:0.9rem; color:var(–text-mid); display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-.qty-btn:hover { background:var(–green-mist); border-color:var(–green-main); }
-.qty-num { font-weight:700; font-size:0.9rem; min-width:20px; text-align:center; }
-.cart-footer { padding:1.25rem 1.5rem; border-top:1px solid var(–green-mist); }
-.cart-total { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-.ct-label { font-weight:600; color:var(–text-mid); }
-.ct-amount { font-family:‘Fraunces’,serif; font-size:1.6rem; font-weight:900; color:var(–green-dark); }
-.name-input-wrap { margin-bottom:1rem; }
-.name-input-wrap label { display:block; font-size:0.8rem; font-weight:600; color:var(–text-mid); margin-bottom:0.4rem; letter-spacing:0.3px; }
-.name-input-wrap input { width:100%; padding:0.65rem 1rem; border:1.5px solid var(–green-pale); border-radius:12px; font-family:‘DM Sans’,sans-serif; font-size:0.95rem; color:var(–text-dark); outline:none; transition:border-color 0.2s; }
-.name-input-wrap input:focus { border-color:var(–green-main); }
-.reserve-btn { width:100%; padding:0.9rem; background:var(–green-dark); color:white; border:none; cursor:pointer; border-radius:14px; font-family:‘Fraunces’,serif; font-size:1.05rem; font-weight:700; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
-.reserve-btn:hover { background:var(–green-main); transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,58,42,0.3); }
-.reserve-btn:disabled { background:var(–green-pale); color:var(–green-mid); cursor:not-allowed; transform:none; }
-.sending-spinner { display:none; }
-.reserve-btn.sending .sending-spinner { display:inline; }
-.reserve-btn.sending .btn-text { display:none; }
+/* ── AMBIENT BLOBS ── */
+.blob {
+position: fixed;
+border-radius: 50%;
+filter: blur(80px);
+pointer-events: none;
+z-index: 0;
+animation: blobFloat 12s ease-in-out infinite;
+}
+.blob-1 { width:500px;height:500px; background:radial-gradient(circle,rgba(61,122,77,0.18),transparent 70%); top:-150px;right:-100px; animation-delay:0s; }
+.blob-2 { width:400px;height:400px; background:radial-gradient(circle,rgba(46,92,58,0.15),transparent 70%); bottom:-100px;left:-100px; animation-delay:-4s; }
+.blob-3 { width:300px;height:300px; background:radial-gradient(circle,rgba(201,168,76,0.08),transparent 70%); top:40%;left:30%; animation-delay:-8s; }
+@keyframes blobFloat {
+0%,100% { transform: translate(0,0) scale(1); }
+33% { transform: translate(30px,-20px) scale(1.05); }
+66% { transform: translate(-20px,30px) scale(0.95); }
+}
 
-/* RESERVATIONS (student view) */
-.reservations-section { position:relative; z-index:1; padding:0 2rem 4rem; max-width:900px; margin:0 auto; }
-.res-card { background:white; border:1px solid var(–green-pale); border-radius:16px; padding:1rem 1.25rem; display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; box-shadow:0 2px 12px var(–shadow); transition:all 0.2s; animation:fadeUp 0.4s ease both; }
-.res-card:hover { border-color:var(–green-light); }
-.res-num { width:38px; height:38px; background:var(–green-dark); color:white; border-radius:10px; font-family:‘Fraunces’,serif; font-weight:900; font-size:0.9rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.res-info { flex:1; }
-.res-name { font-weight:700; font-size:0.95rem; color:var(–green-dark); }
-.res-detail { font-size:0.75rem; color:#9abda8; margin-top:2px; }
-.res-items { font-size:0.82rem; color:var(–text-mid); margin-top:4px; }
-.res-price { font-family:‘Fraunces’,serif; font-weight:900; font-size:1.1rem; color:var(–green-main); flex-shrink:0; }
-.res-delete { width:30px; height:30px; border-radius:8px; border:1px solid var(–green-pale); background:transparent; cursor:pointer; color:#c0b0b0; font-size:0.8rem; display:flex; align-items:center; justify-content:center; transition:all 0.2s; flex-shrink:0; }
-.res-delete:hover { background:#fff0f0; border-color:#e07a5f; color:#e07a5f; }
-.no-res { text-align:center; padding:2.5rem; background:white; border:1.5px dashed var(–green-pale); border-radius:16px; color:var(–text-mid); font-size:0.95rem; }
+/* ═══════════════════════════════════════════
+HEADER
+═══════════════════════════════════════════ */
+header {
+position: fixed; top:0; left:0; right:0;
+z-index: 500;
+padding: 0 2.5rem;
+height: 72px;
+display: flex; align-items:center; justify-content:space-between;
+background: linear-gradient(to bottom, rgba(14,26,18,0.95), rgba(14,26,18,0));
+backdrop-filter: blur(0px);
+transition: background var(–t), backdrop-filter var(–t);
+}
+header.scrolled {
+background: rgba(14,26,18,0.92);
+backdrop-filter: blur(20px);
+border-bottom: 1px solid rgba(106,170,125,0.1);
+}
+.logo {
+display: flex; align-items:center; gap:12px;
+text-decoration: none;
+}
+.logo-mark {
+width:40px; height:40px;
+background: linear-gradient(135deg, var(–fern), var(–sage));
+border-radius: 12px;
+display: flex; align-items:center; justify-content:center;
+font-size: 1.1rem;
+box-shadow: 0 4px 16px rgba(61,122,77,0.4);
+position: relative;
+overflow: hidden;
+}
+.logo-mark::after {
+content:’’;
+position:absolute; inset:0;
+background: linear-gradient(135deg,rgba(255,255,255,0.2),transparent);
+}
+.logo-text {
+font-family: ‘Playfair Display’, serif;
+font-size: 1.25rem; font-weight:700;
+color: var(–cream);
+letter-spacing: -0.3px;
+}
+.logo-text span { color: var(–sage); font-style: italic; }
 
-/* ── ADMIN MODAL ── */
-.modal-overlay { position:fixed; inset:0; background:rgba(13,35,24,0.55); backdrop-filter:blur(6px); z-index:300; display:none; align-items:center; justify-content:center; padding:1rem; }
-.modal-overlay.open { display:flex; }
-.modal { background:white; border-radius:24px; width:100%; max-width:680px; max-height:90vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(13,35,24,0.25); animation:fadeUp 0.35s ease; }
-.modal-head { padding:1.5rem; border-bottom:1px solid var(–green-mist); display:flex; align-items:center; justify-content:space-between; }
-.modal-head h2 { font-family:‘Fraunces’,serif; font-size:1.4rem; font-weight:700; color:var(–green-dark); }
-.modal-body { flex:1; overflow-y:auto; padding:1.5rem; }
+.header-actions { display:flex; align-items:center; gap:0.75rem; }
 
-/* LOGIN */
-.login-form { max-width:320px; margin:2rem auto; text-align:center; }
-.login-form .lock-icon { font-size:3rem; margin-bottom:1rem; }
-.login-form h3 { font-family:‘Fraunces’,serif; font-size:1.3rem; color:var(–green-dark); margin-bottom:0.4rem; }
-.login-form p { font-size:0.85rem; color:var(–text-mid); margin-bottom:1.5rem; }
-.login-form input { width:100%; padding:0.7rem 1rem; border:1.5px solid var(–green-pale); border-radius:12px; font-family:‘DM Sans’,sans-serif; font-size:1rem; outline:none; margin-bottom:0.75rem; transition:border-color 0.2s; }
-.login-form input:focus { border-color:var(–green-main); }
-.login-form input.error { border-color:#e07a5f; }
-.login-btn { width:100%; padding:0.8rem; background:var(–green-dark); color:white; border:none; cursor:pointer; border-radius:12px; font-family:‘Fraunces’,serif; font-size:1rem; font-weight:700; transition:all 0.2s; }
-.login-btn:hover { background:var(–green-main); }
-.login-error { color:#e07a5f; font-size:0.8rem; margin-top:0.5rem; display:none; }
+.btn-ghost {
+background: transparent;
+border: 1px solid rgba(106,170,125,0.3);
+color: var(–mint);
+padding: 0.45rem 1rem;
+border-radius: 100px;
+font-family: ‘Syne’, sans-serif;
+font-size: 0.8rem; font-weight:600;
+letter-spacing: 0.5px;
+cursor: pointer;
+transition: all var(–t);
+text-transform: uppercase;
+}
+.btn-ghost:hover { background:rgba(106,170,125,0.12); border-color:var(–sage); color:var(–sage); }
 
-/* ADMIN PANEL */
-.admin-panel { display:none; }
-.admin-panel.visible { display:block; }
-.admin-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; margin-bottom:1.5rem; }
-.stat-box { background:var(–green-foam); border:1px solid var(–green-pale); border-radius:14px; padding:1rem; text-align:center; }
-.stat-num { font-family:‘Fraunces’,serif; font-size:1.8rem; font-weight:900; color:var(–green-dark); }
-.stat-label { font-size:0.75rem; color:var(–text-mid); margin-top:2px; }
-.admin-filter { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem; }
-.filter-btn { padding:0.35rem 0.9rem; border-radius:100px; border:1.5px solid var(–green-pale); background:white; color:var(–text-mid); font-family:‘DM Sans’,sans-serif; font-size:0.8rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
-.filter-btn:hover { border-color:var(–green-main); color:var(–green-main); }
-.filter-btn.active { background:var(–green-dark); border-color:var(–green-dark); color:white; }
-.admin-res-card { background:var(–green-foam); border:1px solid var(–green-pale); border-radius:14px; padding:1rem 1.1rem; margin-bottom:0.6rem; }
-.arc-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem; }
-.arc-name { font-weight:700; color:var(–green-dark); font-size:0.95rem; }
-.arc-id { font-size:0.75rem; color:#9abda8; }
-.arc-price { font-family:‘Fraunces’,serif; font-weight:900; color:var(–green-main); }
-.arc-items { font-size:0.82rem; color:var(–text-mid); }
-.arc-meta { font-size:0.75rem; color:#9abda8; margin-top:4px; }
-.arc-day-badge { display:inline-block; background:var(–green-pale); color:var(–green-dark); padding:2px 8px; border-radius:100px; font-size:0.72rem; font-weight:600; margin-right:4px; }
-.admin-empty { text-align:center; padding:2rem; color:var(–text-mid); }
-.logout-btn { margin-top:1rem; background:transparent; border:1.5px solid var(–green-pale); color:var(–text-mid); padding:0.5rem 1rem; border-radius:10px; cursor:pointer; font-family:‘DM Sans’,sans-serif; font-size:0.85rem; font-weight:600; transition:all 0.2s; }
-.logout-btn:hover { border-color:#e07a5f; color:#e07a5f; }
+.cart-pill {
+display: flex; align-items:center; gap:8px;
+background: var(–forest);
+border: 1px solid rgba(106,170,125,0.2);
+color: var(–cream);
+padding: 0.45rem 1.1rem;
+border-radius: 100px;
+font-family: ‘Syne’, sans-serif;
+font-size: 0.85rem; font-weight:600;
+cursor: pointer;
+transition: all var(–t);
+box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.cart-pill:hover { background:var(–moss); transform:translateY(-1px); box-shadow:var(–shadow-soft); }
+.cart-badge {
+background: var(–sage);
+color: var(–ink);
+width:22px; height:22px;
+border-radius:50%;
+font-size:0.72rem; font-weight:700;
+display:flex; align-items:center; justify-content:center;
+transition: transform 0.2s;
+}
+.cart-badge.pop { animation: pop 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.4)} 100%{transform:scale(1)} }
 
-/* TOAST */
-.toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(–green-dark); color:white; padding:0.85rem 1.5rem; border-radius:100px; font-weight:600; font-size:0.9rem; box-shadow:0 8px 30px rgba(13,35,24,0.3); z-index:999; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space:nowrap; }
+/* ═══════════════════════════════════════════
+HERO
+═══════════════════════════════════════════ */
+.hero {
+position: relative; z-index: 1;
+min-height: 100vh;
+display: flex; flex-direction:column; align-items:center; justify-content:center;
+text-align: center;
+padding: 8rem 2rem 4rem;
+overflow: hidden;
+}
+
+.hero-eyebrow {
+display: inline-flex; align-items:center; gap:8px;
+background: rgba(106,170,125,0.1);
+border: 1px solid rgba(106,170,125,0.25);
+color: var(–sage);
+padding: 0.4rem 1.1rem;
+border-radius: 100px;
+font-size: 0.75rem; font-weight:700;
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-bottom: 2rem;
+
+}
+.eyebrow-dot {
+width:6px; height:6px;
+background:var(–sage);
+border-radius:50%;
+animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero-title {
+font-family: ‘Playfair Display’, serif;
+font-size: clamp(3.5rem, 9vw, 7.5rem);
+font-weight: 900;
+line-height: 0.95;
+letter-spacing: -2px;
+color: var(–cream);
+
+max-width: 900px;
+}
+.hero-title .line-green { color: var(–sage); display:block; font-style:italic; }
+.hero-title .line-gold { color: var(–gold); }
+
+.hero-sub {
+margin: 2rem auto 0;
+max-width: 480px;
+color: var(–mint);
+font-size: 1rem;
+line-height: 1.7;
+font-weight: 400;
+opacity: 0.8;
+
+}
+
+.hero-scroll {
+position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+display: flex; flex-direction:column; align-items:center; gap:8px;
+color: rgba(106,170,125,0.5);
+font-size: 0.7rem; letter-spacing: 2px; text-transform:uppercase;
+
+}
+.scroll-line {
+width:1px; height:40px;
+background: linear-gradient(to bottom, var(–sage), transparent);
+animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+
+.hero-stats {
+display: flex; gap: 3rem;
+margin-top: 3.5rem;
+
+}
+.stat { text-align:center; }
+.stat-n {
+font-family: ‘Playfair Display’, serif;
+font-size: 2rem; font-weight:700;
+color: var(–sage);
+}
+.stat-l { font-size: 0.75rem; color: var(–mint); opacity:0.6; letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+
+/* ═══════════════════════════════════════════
+SECTION WRAPPER
+═══════════════════════════════════════════ */
+.section {
+position: relative; z-index: 1;
+max-width: 1100px;
+margin: 0 auto;
+padding: 0 2.5rem;
+}
+
+.section-header {
+display: flex; align-items:flex-end; justify-content:space-between;
+margin-bottom: 2.5rem;
+padding-bottom: 1.5rem;
+border-bottom: 1px solid rgba(106,170,125,0.12);
+}
+.section-label {
+font-size: 0.7rem; font-weight:700;
+color: var(–sage);
+letter-spacing: 3px;
+text-transform: uppercase;
+margin-bottom: 0.5rem;
+}
+.section-title {
+font-family: ‘Playfair Display’, serif;
+font-size: 2.2rem; font-weight:700;
+color: var(–cream);
+line-height: 1.1;
+}
+.section-title em { color:var(–sage); font-style:italic; }
+
+/* ═══════════════════════════════════════════
+DAY SELECTOR
+═══════════════════════════════════════════ */
+.day-section {
+position: relative; z-index:1;
+padding: 5rem 2.5rem 2rem;
+max-width: 1100px; margin: 0 auto;
+}
+.day-track {
+display: flex; gap: 0.75rem;
+overflow-x: auto;
+padding-bottom: 0.5rem;
+scrollbar-width: none;
+}
+.day-track::-webkit-scrollbar { display:none; }
+.day-chip {
+flex-shrink: 0;
+padding: 0.6rem 1.4rem;
+border-radius: 100px;
+border: 1px solid rgba(106,170,125,0.2);
+background: rgba(31,61,40,0.4);
+color: var(–mint);
+font-family: ‘Syne’, sans-serif;
+font-size: 0.85rem; font-weight:600;
+cursor: pointer;
+transition: all var(–t);
+position: relative; overflow:hidden;
+white-space: nowrap;
+}
+.day-chip::before {
+content:’’;
+position:absolute; inset:0;
+background:linear-gradient(135deg,var(–fern),var(–sage));
+opacity:0;
+transition: opacity var(–t);
+}
+.day-chip span { position:relative; z-index:1; }
+.day-chip:hover { border-color:rgba(106,170,125,0.5); color:var(–cream); }
+.day-chip.active { border-color:transparent; color:var(–ink); }
+.day-chip.active::before { opacity:1; }
+.day-today::after {
+content:‘dnes’;
+position:absolute; top:4px; right:8px;
+font-size:0.55rem; letter-spacing:1px; text-transform:uppercase;
+color:var(–gold);
+z-index:2;
+}
+
+/* ═══════════════════════════════════════════
+MENU GRID
+═══════════════════════════════════════════ */
+.menu-section {
+position:relative; z-index:1;
+padding: 1rem 2.5rem 5rem;
+max-width: 1100px; margin: 0 auto;
+}
+
+.menu-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+gap: 1.25rem;
+}
+
+.menu-card {
+background: linear-gradient(145deg, rgba(31,61,40,0.6), rgba(14,26,18,0.8));
+border: 1px solid rgba(106,170,125,0.12);
+border-radius: var(–r2);
+overflow: hidden;
+transition: all 0.4s cubic-bezier(0.34,1.1,0.64,1);
+position: relative;
+backdrop-filter: blur(10px);
+opacity: 1;
+}
+.menu-card::before {
+content:’’;
+position:absolute; inset:0;
+background: linear-gradient(135deg, rgba(106,170,125,0.06), transparent 60%);
+opacity:0;
+transition: opacity var(–t);
+}
+.menu-card:hover { transform:translateY(-8px) scale(1.01); border-color:rgba(106,170,125,0.3); box-shadow:0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(106,170,125,0.1); }
+.menu-card:hover::before { opacity:1; }
+
+.card-top {
+padding: 2rem 1.75rem 1.25rem;
+display: flex; align-items:flex-start; justify-content:space-between;
+position:relative;
+}
+.card-emoji-wrap {
+width:64px; height:64px;
+background: linear-gradient(135deg, rgba(61,122,77,0.3), rgba(46,92,58,0.2));
+border: 1px solid rgba(106,170,125,0.2);
+border-radius: 18px;
+display:flex; align-items:center; justify-content:center;
+font-size:1.9rem;
+transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.menu-card:hover .card-emoji-wrap { transform: scale(1.1) rotate(-5deg); }
+
+.card-badges { display:flex; flex-direction:column; gap:4px; align-items:flex-end; }
+.badge {
+padding: 3px 10px;
+border-radius: 100px;
+font-size: 0.65rem; font-weight:700;
+letter-spacing: 0.8px;
+text-transform: uppercase;
+}
+.badge-size-small { background:rgba(106,170,125,0.15); color:var(–sage); border:1px solid rgba(106,170,125,0.25); }
+.badge-size-large { background:rgba(201,168,76,0.15); color:var(–gold); border:1px solid rgba(201,168,76,0.25); }
+.badge-stock { background:rgba(192,57,43,0.15); color:#e07a5f; border:1px solid rgba(192,57,43,0.2); }
+
+.card-body { padding: 0 1.75rem 1.75rem; }
+.card-name {
+font-family: ‘Playfair Display’, serif;
+font-size: 1.25rem; font-weight:700;
+color: var(–cream);
+margin-bottom: 0.35rem;
+line-height: 1.2;
+}
+.card-desc {
+font-size: 0.82rem;
+color: var(–mint);
+opacity: 0.6;
+line-height: 1.55;
+margin-bottom: 1.25rem;
+}
+.card-footer {
+display:flex; align-items:center; justify-content:space-between;
+}
+.card-price {
+font-family: ‘Playfair Display’, serif;
+font-size: 1.6rem; font-weight:700;
+color: var(–cream);
+line-height:1;
+}
+.card-price-unit { font-size:0.75rem; color:var(–mint); opacity:0.5; font-family:‘Syne’,sans-serif; font-weight:400; margin-left:2px; }
+
+.add-circle {
+width:44px; height:44px;
+border-radius:50%;
+background:linear-gradient(135deg,var(–fern),var(–sage));
+border:none; cursor:pointer;
+display:flex; align-items:center; justify-content:center;
+font-size:1.4rem; color:var(–ink);
+font-weight:300;
+transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+box-shadow:0 4px 16px rgba(61,122,77,0.4);
+flex-shrink:0;
+}
+.add-circle:hover { transform:scale(1.15) rotate(90deg); box-shadow:0 6px 24px rgba(61,122,77,0.6); }
+.add-circle.added { background:linear-gradient(135deg,var(–gold),var(–gold-light)); box-shadow:0 4px 16px rgba(201,168,76,0.4); }
+.add-circle.added:hover { transform:scale(1.15) rotate(0deg); }
+
+/* stock bar */
+.stock-bar-wrap { margin-top:1rem; }
+.stock-label { display:flex; justify-content:space-between; font-size:0.7rem; color:var(–mint); opacity:0.5; margin-bottom:5px; }
+.stock-bar { height:3px; background:rgba(106,170,125,0.12); border-radius:2px; overflow:hidden; }
+.stock-fill { height:100%; border-radius:2px; background:linear-gradient(to right,var(–fern),var(–sage)); transition:width 0.6s ease; }
+.stock-fill.low { background:linear-gradient(to right,#c0392b,#e07a5f); }
+
+/* flavor input */
+.flavor-wrap {
+margin-top: 0.9rem;
+padding-top: 0.9rem;
+border-top: 1px solid rgba(106,170,125,0.1);
+}
+.flavor-label {
+display: block;
+font-size: 0.68rem; font-weight:700;
+letter-spacing: 1.5px; text-transform:uppercase;
+color: var(–sage); opacity:0.7;
+margin-bottom: 0.4rem;
+}
+.flavor-input {
+width: 100%;
+padding: 0.55rem 0.85rem;
+background: rgba(31,61,40,0.5);
+border: 1px solid rgba(106,170,125,0.18);
+border-radius: 10px;
+font-family: ‘Syne’, sans-serif; font-size: 0.85rem;
+color: var(–cream);
+outline: none;
+transition: all var(–t);
+}
+.flavor-input::placeholder { color: rgba(168,213,181,0.3); }
+.flavor-input:focus { border-color: rgba(106,170,125,0.45); background: rgba(31,61,40,0.7); }
+
+/* ═══════════════════════════════════════════
+CART DRAWER
+═══════════════════════════════════════════ */
+.drawer-overlay {
+position:fixed; inset:0;
+background:rgba(8,16,10,0.7);
+backdrop-filter:blur(8px);
+z-index:600;
+opacity:0; pointer-events:none;
+transition:opacity 0.4s;
+}
+.drawer-overlay.open { opacity:1; pointer-events:all; }
+
+.cart-drawer {
+position:fixed; top:0; right:0;
+width:min(480px,100vw);
+height:100vh;
+background: linear-gradient(160deg, rgba(22,42,28,0.98), rgba(14,26,18,0.99));
+backdrop-filter:blur(20px);
+border-left:1px solid rgba(106,170,125,0.12);
+z-index:601;
+transform:translateX(100%);
+transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+display:flex; flex-direction:column;
+}
+.cart-drawer.open { transform:translateX(0); }
+
+.drawer-header {
+padding:1.75rem 2rem 1.25rem;
+border-bottom:1px solid rgba(106,170,125,0.1);
+display:flex; align-items:center; justify-content:space-between;
+flex-shrink:0;
+}
+.drawer-title {
+font-family:‘Playfair Display’,serif;
+font-size:1.5rem; font-weight:700;
+color:var(–cream);
+}
+.drawer-close {
+width:36px; height:36px;
+border-radius:50%;
+background:rgba(106,170,125,0.08);
+border:1px solid rgba(106,170,125,0.15);
+color:var(–mint);
+cursor:pointer; font-size:1rem;
+display:flex; align-items:center; justify-content:center;
+transition:all var(–t);
+}
+.drawer-close:hover { background:rgba(106,170,125,0.15); color:var(–cream); }
+
+.drawer-items { flex:1; overflow-y:auto; padding:1.25rem 2rem; scrollbar-width:thin; scrollbar-color:rgba(106,170,125,0.2) transparent; }
+
+.empty-cart {
+display:flex; flex-direction:column; align-items:center; justify-content:center;
+height:100%; text-align:center; padding:2rem;
+}
+.empty-icon { font-size:4rem; margin-bottom:1rem; opacity:0.5; }
+.empty-title { font-family:‘Playfair Display’,serif; font-size:1.2rem; color:var(–cream); margin-bottom:0.5rem; }
+.empty-sub { font-size:0.85rem; color:var(–mint); opacity:0.5; }
+
+.cart-item {
+display:flex; align-items:center; gap:1rem;
+padding:1rem 0;
+border-bottom:1px solid rgba(106,170,125,0.08);
+
+}
+.ci-icon {
+width:50px; height:50px;
+background:linear-gradient(135deg,rgba(61,122,77,0.25),rgba(46,92,58,0.15));
+border:1px solid rgba(106,170,125,0.15);
+border-radius:14px;
+display:flex; align-items:center; justify-content:center;
+font-size:1.5rem; flex-shrink:0;
+}
+.ci-info { flex:1; min-width:0; }
+.ci-name { font-weight:600; font-size:0.9rem; color:var(–cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ci-day { font-size:0.75rem; color:var(–sage); opacity:0.7; margin-top:2px; }
+.ci-sub-price { font-size:0.8rem; color:var(–mint); opacity:0.5; margin-top:2px; }
+.ci-controls { display:flex; align-items:center; gap:8px; }
+.ci-qty-btn {
+width:28px; height:28px; border-radius:50%;
+background:rgba(106,170,125,0.08);
+border:1px solid rgba(106,170,125,0.2);
+color:var(–mint); cursor:pointer; font-size:0.85rem;
+display:flex; align-items:center; justify-content:center;
+transition:all var(–t);
+}
+.ci-qty-btn:hover { background:rgba(106,170,125,0.18); color:var(–cream); }
+.ci-qty { font-weight:700; font-size:0.9rem; color:var(–cream); min-width:18px; text-align:center; }
+.ci-price { font-family:‘Playfair Display’,serif; font-weight:700; font-size:1rem; color:var(–sage); flex-shrink:0; }
+
+.drawer-footer {
+padding:1.5rem 2rem 2rem;
+border-top:1px solid rgba(106,170,125,0.1);
+flex-shrink:0;
+}
+
+.total-row {
+display:flex; justify-content:space-between; align-items:baseline;
+margin-bottom:1.5rem;
+}
+.total-label { font-size:0.8rem; letter-spacing:1.5px; text-transform:uppercase; color:var(–mint); opacity:0.6; }
+.total-amount {
+font-family:‘Playfair Display’,serif;
+font-size:2rem; font-weight:700;
+color:var(–cream);
+}
+.total-amount span { font-size:1rem; opacity:0.5; }
+
+.input-group { margin-bottom:1rem; }
+.input-label {
+display:block; font-size:0.72rem; font-weight:700;
+letter-spacing:1.5px; text-transform:uppercase;
+color:var(–sage); opacity:0.7;
+margin-bottom:0.5rem;
+}
+.input-field {
+width:100%;
+padding:0.75rem 1.1rem;
+background:rgba(31,61,40,0.4);
+border:1px solid rgba(106,170,125,0.2);
+border-radius:14px;
+font-family:‘Syne’,sans-serif; font-size:0.95rem;
+color:var(–cream);
+outline:none;
+transition:all var(–t);
+}
+.input-field::placeholder { color:rgba(168,213,181,0.3); }
+.input-field:focus { border-color:rgba(106,170,125,0.5); background:rgba(31,61,40,0.6); box-shadow:0 0 0 3px rgba(106,170,125,0.08); }
+.input-field.err { border-color:rgba(192,57,43,0.6); }
+
+.pay-options { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:1rem; }
+.pay-opt {
+padding:0.65rem;
+border-radius:12px;
+border:1px solid rgba(106,170,125,0.15);
+background:rgba(31,61,40,0.3);
+color:var(–mint);
+font-family:‘Syne’,sans-serif; font-size:0.78rem; font-weight:600;
+cursor:pointer; text-align:center;
+transition:all var(–t);
+}
+.pay-opt:hover { border-color:rgba(106,170,125,0.35); color:var(–cream); }
+.pay-opt.selected { background:rgba(106,170,125,0.15); border-color:var(–sage); color:var(–sage); }
+.pay-opt .pay-icon { font-size:1.1rem; display:block; margin-bottom:2px; }
+
+.revolut-link-wrap { display:none; margin-bottom:1rem; }
+.revolut-link-wrap.visible { display:block; }
+
+/* payment notice */
+.payment-notice {
+display: flex; align-items: center; gap: 0.85rem;
+background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.06));
+border: 1px solid rgba(201,168,76,0.3);
+border-radius: 14px;
+padding: 0.9rem 1.1rem;
+margin-bottom: 1rem;
+}
+.pn-icon { font-size: 1.6rem; flex-shrink: 0; }
+.pn-title {
+font-weight: 700; font-size: 0.88rem;
+color: var(–gold-light);
+margin-bottom: 2px;
+}
+.pn-sub { font-size: 0.75rem; color: var(–mint); opacity: 0.6; line-height: 1.4; }
+.revolut-btn-outer {
+display:block; width:100%;
+padding:0.9rem;
+background:linear-gradient(135deg,#1a237e,#283593);
+color:white; text-decoration:none;
+border-radius:14px;
+text-align:center;
+font-family:‘Syne’,sans-serif; font-size:0.9rem; font-weight:700;
+letter-spacing:0.5px;
+transition:all var(–t);
+box-shadow:0 4px 20px rgba(26,35,126,0.4);
+}
+.revolut-btn-outer:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(26,35,126,0.5); }
+
+.confirm-btn {
+width:100%;
+padding:1rem;
+background:linear-gradient(135deg,var(–fern),var(–sage));
+color:var(–ink);
+border:none; cursor:pointer;
+border-radius:16px;
+font-family:‘Playfair Display’,serif;
+font-size:1.05rem; font-weight:700;
+letter-spacing:0.3px;
+display:flex; align-items:center; justify-content:center; gap:8px;
+transition:all 0.3s cubic-bezier(0.34,1.2,0.64,1);
+box-shadow:0 4px 20px rgba(61,122,77,0.3);
+}
+.confirm-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 32px rgba(61,122,77,0.5); }
+.confirm-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+.confirm-btn.loading { pointer-events:none; }
+.btn-spinner { display:none; animation:spin 0.8s linear infinite; }
+.confirm-btn.loading .btn-label { display:none; }
+.confirm-btn.loading .btn-spinner { display:inline; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ═══════════════════════════════════════════
+RESERVATIONS
+═══════════════════════════════════════════ */
+.res-section {
+position:relative; z-index:1;
+padding:0 2.5rem 5rem;
+max-width:1100px; margin:0 auto;
+}
+
+.res-grid { display:flex; flex-direction:column; gap:0.75rem; }
+
+.res-card {
+display:flex; align-items:center; gap:1.25rem;
+background:linear-gradient(135deg,rgba(31,61,40,0.4),rgba(14,26,18,0.6));
+border:1px solid rgba(106,170,125,0.1);
+border-radius:var(–r);
+padding:1.1rem 1.5rem;
+transition:all var(–t);
+backdrop-filter:blur(8px);
+}
+.res-card:hover { border-color:rgba(106,170,125,0.25); background:linear-gradient(135deg,rgba(31,61,40,0.55),rgba(14,26,18,0.7)); }
+
+.res-num {
+width:40px; height:40px;
+background:linear-gradient(135deg,var(–fern),var(–sage));
+border-radius:12px;
+font-family:‘Playfair Display’,serif; font-weight:700; font-size:0.95rem;
+color:var(–ink);
+display:flex; align-items:center; justify-content:center;
+flex-shrink:0;
+}
+.res-info { flex:1; min-width:0; }
+.res-name { font-weight:700; font-size:0.95rem; color:var(–cream); }
+.res-meta { font-size:0.75rem; color:var(–sage); opacity:0.6; margin-top:2px; }
+.res-items { font-size:0.8rem; color:var(–mint); opacity:0.55; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.res-right { display:flex; align-items:center; gap:0.75rem; flex-shrink:0; }
+.res-payment-badge {
+padding:3px 10px; border-radius:100px;
+font-size:0.65rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase;
+}
+.rpb-online { background:rgba(201,168,76,0.15); color:var(–gold); border:1px solid rgba(201,168,76,0.2); }
+.rpb-place { background:rgba(106,170,125,0.12); color:var(–sage); border:1px solid rgba(106,170,125,0.2); }
+.res-price {
+font-family:‘Playfair Display’,serif; font-weight:700; font-size:1.1rem;
+color:var(–cream);
+}
+.res-del {
+width:32px; height:32px; border-radius:10px;
+background:transparent;
+border:1px solid rgba(192,57,43,0.2);
+color:rgba(192,57,43,0.5);
+cursor:pointer; font-size:0.8rem;
+display:flex; align-items:center; justify-content:center;
+transition:all var(–t);
+}
+.res-del:hover { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.5); color:#e07a5f; }
+
+.no-res {
+text-align:center; padding:3.5rem 2rem;
+background:rgba(31,61,40,0.2);
+border:1px dashed rgba(106,170,125,0.15);
+border-radius:var(–r2);
+color:var(–mint); opacity:0.5;
+font-size:0.95rem;
+}
+.no-res-icon { font-size:2.5rem; margin-bottom:0.75rem; }
+
+/* ═══════════════════════════════════════════
+ADMIN MODAL
+═══════════════════════════════════════════ */
+.admin-overlay {
+position:fixed; inset:0;
+background:rgba(8,16,10,0.85);
+backdrop-filter:blur(12px);
+z-index:700;
+display:none; align-items:center; justify-content:center;
+padding:1rem;
+}
+.admin-overlay.open { display:flex; }
+
+.admin-modal {
+background:linear-gradient(160deg,rgba(22,42,28,0.98),rgba(14,26,18,0.99));
+border:1px solid rgba(106,170,125,0.15);
+border-radius:24px;
+width:100%; max-width:700px;
+max-height:88vh;
+display:flex; flex-direction:column;
+box-shadow:0 30px 80px rgba(0,0,0,0.6);
+animation:fadeUp 0.35s ease;
+}
+.admin-modal-head {
+padding:1.75rem 2rem 1.25rem;
+border-bottom:1px solid rgba(106,170,125,0.1);
+display:flex; align-items:center; justify-content:space-between;
+flex-shrink:0;
+}
+.admin-modal-title { font-family:‘Playfair Display’,serif; font-size:1.4rem; font-weight:700; color:var(–cream); }
+.admin-modal-body { flex:1; overflow-y:auto; padding:2rem; }
+
+/* Login */
+.login-wrap { max-width:320px; margin:1rem auto; text-align:center; }
+.login-lock { font-size:3rem; margin-bottom:1rem; }
+.login-title { font-family:‘Playfair Display’,serif; font-size:1.4rem; color:var(–cream); margin-bottom:0.4rem; }
+.login-sub { font-size:0.85rem; color:var(–mint); opacity:0.55; margin-bottom:2rem; line-height:1.5; }
+.login-err { color:#e07a5f; font-size:0.8rem; margin-top:0.5rem; display:none; }
+
+/* Admin stats */
+.admin-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; margin-bottom:2rem; }
+.astat {
+background:rgba(31,61,40,0.4); border:1px solid rgba(106,170,125,0.12);
+border-radius:16px; padding:1.25rem; text-align:center;
+}
+.astat-n { font-family:‘Playfair Display’,serif; font-size:2rem; font-weight:700; color:var(–sage); }
+.astat-l { font-size:0.7rem; color:var(–mint); opacity:0.5; letter-spacing:1px; text-transform:uppercase; margin-top:3px; }
+
+.admin-filter { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.25rem; }
+.af-btn {
+padding:0.35rem 0.9rem; border-radius:100px;
+border:1px solid rgba(106,170,125,0.2);
+background:transparent; color:var(–mint); opacity:0.7;
+font-family:‘Syne’,sans-serif; font-size:0.78rem; font-weight:600;
+cursor:pointer; transition:all var(–t);
+}
+.af-btn:hover { border-color:rgba(106,170,125,0.4); opacity:1; }
+.af-btn.active { background:rgba(106,170,125,0.15); border-color:var(–sage); color:var(–sage); opacity:1; }
+
+.admin-res-item {
+background:rgba(31,61,40,0.3); border:1px solid rgba(106,170,125,0.1);
+border-radius:14px; padding:1rem 1.25rem; margin-bottom:0.6rem;
+}
+.ari-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.4rem; }
+.ari-name { font-weight:700; color:var(–cream); font-size:0.95rem; }
+.ari-id { font-size:0.72rem; color:var(–sage); opacity:0.5; }
+.ari-price { font-family:‘Playfair Display’,serif; font-weight:700; color:var(–gold); }
+.ari-items { font-size:0.8rem; color:var(–mint); opacity:0.55; }
+.ari-meta { font-size:0.72rem; color:var(–sage); opacity:0.4; margin-top:6px; display:flex; justify-content:space-between; align-items:center; }
+.ari-del { background:transparent; border:none; color:rgba(192,57,43,0.5); cursor:pointer; font-size:0.8rem; transition:color var(–t); }
+.ari-del:hover { color:#e07a5f; }
+
+.admin-empty { text-align:center; padding:2.5rem; color:var(–mint); opacity:0.4; }
+.admin-logout {
+margin-top:1.5rem;
+background:transparent; border:1px solid rgba(192,57,43,0.25);
+color:rgba(192,57,43,0.6); padding:0.55rem 1.2rem; border-radius:10px;
+cursor:pointer; font-family:‘Syne’,sans-serif; font-size:0.82rem; font-weight:600;
+transition:all var(–t);
+}
+.admin-logout:hover { background:rgba(192,57,43,0.08); border-color:rgba(192,57,43,0.5); color:#e07a5f; }
+
+/* ═══════════════════════════════════════════
+TOAST
+═══════════════════════════════════════════ */
+.toast {
+position:fixed; bottom:2rem; left:50%;
+transform:translateX(-50%) translateY(120px);
+padding:0.85rem 1.75rem;
+border-radius:100px;
+font-family:‘Syne’,sans-serif; font-size:0.88rem; font-weight:600;
+white-space:nowrap;
+z-index:900;
+transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+display:flex; align-items:center; gap:8px;
+box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+.toast.success { background:linear-gradient(135deg,var(–forest),var(–moss)); border:1px solid rgba(106,170,125,0.3); color:var(–cream); }
+.toast.error { background:linear-gradient(135deg,#4a1010,#7a1f1f); border:1px solid rgba(192,57,43,0.3); color:#e07a5f; }
 .toast.show { transform:translateX(-50%) translateY(0); }
-.toast.error { background:#c0392b; }
 
-@keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-@media(max-width:600px){.hero{padding:2.5rem 1.25rem 2rem}.day-section,.menu-section,.reservations-section{padding-left:1.25rem;padding-right:1.25rem}header{padding:0 1.25rem}.admin-stats{grid-template-columns:repeat(2,1fr)}}
+/* ═══════════════════════════════════════════
+FOOTER
+═══════════════════════════════════════════ */
+footer {
+position:relative; z-index:1;
+border-top:1px solid rgba(106,170,125,0.08);
+padding:2rem 2.5rem;
+text-align:center;
+color:var(–mint); opacity:0.3;
+font-size:0.78rem; letter-spacing:0.5px;
+}
+
+/* ═══════════════════════════════════════════
+ANIMATIONS & UTILS
+═══════════════════════════════════════════ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+.reveal { opacity:1; transform:translateY(0); transition:opacity 0.7s ease, transform 0.7s ease; }
+.reveal.animate { opacity:0; transform:translateY(30px); }
+.reveal.animate.visible { opacity:1; transform:translateY(0); }
+
+/* ═══════════════════════════════════════════
+RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:768px){
+header { padding:0 1.25rem; }
+.hero-stats { gap:2rem; }
+.day-section,.menu-section,.res-section { padding-left:1.25rem; padding-right:1.25rem; }
+.menu-grid { grid-template-columns:1fr; }
+.admin-stats { grid-template-columns:repeat(2,1fr); }
+.pay-options { grid-template-columns:1fr 1fr; }
+body { cursor:auto; }
+.cursor,.cursor-ring { display:none; }
+.hero-title { letter-spacing:-1px; }
+}
 </style>
 
 </head>
 <body>
 
-<!-- CONFIG BANNER -->
+<!-- CURSOR -->
 
-<div class="config-banner" id="configBanner">
-  ⚠️ <strong>Nastavení EmailJS:</strong> Otevři zdrojový kód a doplň <code>EMAILJS_SERVICE_ID</code>, <code>EMAILJS_TEMPLATE_ID</code> a <code>EMAILJS_PUBLIC_KEY</code>. 
-  <a href="https://emailjs.com" target="_blank">emailjs.com →</a>
-</div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- AMBIENT -->
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
 <!-- HEADER -->
 
-<header>
-  <a class="logo" href="#"><div class="logo-icon">🥪</div>Školní<span>Svačiny</span></a>
-  <div class="header-right">
-    <button class="admin-btn" onclick="openAdmin()">🔐 Admin</button>
-    <button class="cart-btn" onclick="toggleCart()">🛒 Košík <span class="cart-count" id="cartCount">0</span></button>
+<header id="header">
+  <a class="logo" href="#">
+    <div class="logo-mark">🥪</div>
+    <div class="logo-text">Bu<span>fet</span></div>
+  </a>
+  <div class="header-actions">
+    <button class="btn-ghost" onclick="openAdmin()">⚙ Admin</button>
+    <button class="cart-pill" onclick="toggleDrawer()">
+      🛒 Košík
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
   </div>
 </header>
 
 <!-- HERO -->
 
 <section class="hero">
-  <div class="hero-badge">🌿 Čerstvé každý den</div>
-  <h1>Objednej si <em>svačinu</em><br>na celý týden</h1>
-  <p>Vyber den, zvol svačinu a rezervuj. Vyzvednutí v přestávce u školního bufetu.</p>
+  <div class="hero-eyebrow"><span class="eyebrow-dot"></span> Čerstvé každý den</div>
+  <h1 class="hero-title">
+    Školní<br>
+    <span class="line-green">svačiny</span>
+    <span class="line-gold">.</span>
+  </h1>
+  <p class="hero-sub">Rezervuj si svačinu předem, vyzvedni ji v přestávce. Jednoduché, rychlé, chutné.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n">6</div><div class="stat-l">položek</div></div>
+    <div class="stat"><div class="stat-n">5</div><div class="stat-l">dní v týdnu</div></div>
+    <div class="stat"><div class="stat-n">20 Kč</div><div class="stat-l">od</div></div>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
 
 <!-- DAY SELECTOR -->
 
 <div class="day-section">
-  <div class="day-label">📅 Vyber den</div>
-  <div class="days" id="days"></div>
+  <div class="section-label">📅 Vybrat den</div>
+  <div class="day-track" id="dayTrack"></div>
 </div>
 
 <!-- MENU -->
 
 <div class="menu-section">
-  <div class="section-title">Dnešní nabídka</div>
-  <div class="divider"></div>
+  <div class="section-header">
+    <div>
+      <div class="section-label">🥗 Dnešní nabídka</div>
+      <div class="section-title">Co dnes <em>chceš?</em></div>
+    </div>
+  </div>
   <div class="menu-grid" id="menuGrid"></div>
 </div>
 
-<!-- STUDENT RESERVATIONS -->
+<!-- RESERVATIONS -->
 
-<div class="reservations-section">
-  <div class="section-title">Moje rezervace</div>
-  <div class="divider"></div>
-  <div id="reservationsList"></div>
+<div class="res-section">
+  <div class="section-header">
+    <div>
+      <div class="section-label">📋 Moje objednávky</div>
+      <div class="section-title">Rezervace</div>
+    </div>
+  </div>
+  <div class="res-grid" id="resList"></div>
 </div>
 
-<!-- CART OVERLAY -->
+<footer>© 2024 Bufet — Školní svačiny &nbsp;·&nbsp; Vyrobeno s ❤️</footer>
 
-<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+<!-- CART DRAWER -->
 
-<!-- CART SIDEBAR -->
-
-<div class="cart-sidebar" id="cartSidebar">
-  <div class="cart-header">
-    <h2>🛒 Košík</h2>
-    <button class="close-btn" onclick="toggleCart()">✕</button>
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">Tvůj košík</div>
+    <button class="drawer-close" onclick="toggleDrawer()">✕</button>
   </div>
-  <div class="cart-items" id="cartItems"></div>
-  <div class="cart-footer">
-    <div class="cart-total">
-      <span class="ct-label">Celkem</span>
-      <span class="ct-amount" id="cartTotal">0 Kč</span>
+  <div class="drawer-items" id="drawerItems"></div>
+  <div class="drawer-footer">
+    <div class="total-row">
+      <div class="total-label">Celkem k úhradě</div>
+      <div class="total-amount" id="totalAmount">0 <span>Kč</span></div>
     </div>
-    <div class="name-input-wrap">
-      <label>Tvoje jméno & třída</label>
-      <input type="text" id="studentName" placeholder="např. Jana Nováková, 8.B" />
+    <div class="input-group">
+      <label class="input-label">Jméno &amp; třída</label>
+      <input class="input-field" id="studentName" type="text" placeholder="Jana Nováková, 8.B" />
     </div>
-    <button class="reserve-btn" id="reserveBtn" onclick="confirmReservation()" disabled>
-      <span class="btn-text">✅ Potvrdit rezervaci</span>
-      <span class="sending-spinner">⏳ Odesílám...</span>
+    <div class="payment-notice">
+      <div class="pn-icon">💵</div>
+      <div class="pn-text">
+        <div class="pn-title">Platba předem v hotovosti</div>
+        <div class="pn-sub">Zaplať při vyzvednutí svačiny u kantýny před výdejem</div>
+      </div>
+    </div>
+    <button class="confirm-btn" id="confirmBtn" onclick="confirmReservation()" disabled>
+      <span class="btn-label">✓ Potvrdit rezervaci</span>
+      <span class="btn-spinner">⟳</span>
     </button>
   </div>
 </div>
 
 <!-- ADMIN MODAL -->
 
-<div class="modal-overlay" id="adminModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h2 id="modalTitle">🔐 Admin panel</h2>
-      <button class="close-btn" onclick="closeAdmin()">✕</button>
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-modal">
+    <div class="admin-modal-head">
+      <div class="admin-modal-title" id="adminModalTitle">Admin panel</div>
+      <button class="drawer-close" onclick="closeAdmin()">✕</button>
     </div>
-    <div class="modal-body" id="modalBody">
-      <!-- login form injected here -->
-    </div>
+    <div class="admin-modal-body" id="adminModalBody"></div>
   </div>
 </div>
 
@@ -292,300 +1026,368 @@ header { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.85);
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════
-//  ⚙️  KONFIGURACE – DOPLŇ SVOJE HODNOTY Z EMAILJS
-// ══════════════════════════════════════════════════
-const EMAILJS_SERVICE_ID  = 'service_xubh9sh';   // např. 'service_abc123'
-const EMAILJS_TEMPLATE_ID = 'template_nwe34pn';  // např. 'template_xyz789'
-const EMAILJS_PUBLIC_KEY  = '5EtQMEMwJV2JB6RyY';     // např. 'abcDEF123456'
+// ══════════════════════════════════════════
+//  ⚙️  KONFIGURACE
+// ══════════════════════════════════════════
+const EMAILJS_SERVICE_ID  = 'service_xubh9sh';
+const EMAILJS_TEMPLATE_ID = 'template_nwe34pn';
+const EMAILJS_PUBLIC_KEY  = '5EtQMEMwJV2JB6RyY';
+const ADMIN_PASSWORD      = 'kantyna2024';   // ← změň!
+const REVOLUT_LINK        = 'https://checkout.revolut.com/pay/f1b1a68b-ba64-49a4-93f0-4091c51dbd04';
 
-const ADMIN_PASSWORD = 'kantyna2024';  // ← změň si heslo!
-// ══════════════════════════════════════════════════
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
-const CONFIGURED = !EMAILJS_SERVICE_ID.startsWith('TVOJE');
-if (CONFIGURED) {
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-  document.getElementById('configBanner').classList.add('hidden');
-}
-
-// ── DATA ──────────────────────────────────────────
-const DAYS = ['Pondělí','Úterý','Středa','Čtvrtek','Pátek'];
-const today = new Date().getDay();
-let selectedDay = (today>=1&&today<=5) ? today-1 : 0;
+// ── DATA ─────────────────────────────────
+const DAYS = [
+  {name:'Pondělí',short:'Po'},
+  {name:'Úterý',short:'Út'},
+  {name:'Středa',short:'St'},
+  {name:'Čtvrtek',short:'Čt'},
+  {name:'Pátek',short:'Pá'},
+];
+const todayIdx = (() => { const d=new Date().getDay(); return (d>=1&&d<=5)?d-1:0; })();
 
 const MENU = [
   {id:1,name:'Svačina',emoji:'🥪',desc:'Čerstvá denní svačina připravená ráno',price:20,size:'malá',stock:20},
   {id:2,name:'Velká svačina',emoji:'🍱',desc:'Větší porce pro větší hlad – vydatná a chutná',price:50,size:'velká',stock:20},
-  {id:3,name:'Malá šťáva',emoji:'🧃',desc:'Čerstvě lisovaná šťáva 10ml – rychlé osvěžení',price:130,size:'malá',stock:20},
-  {id:4,name:'Velká šťáva',emoji:'🍹',desc:'Čerstvě lisovaná šťáva 30ml – pořádná dávka vitamínů',price:220,size:'velká',stock:20},
-  {id:5,name:'Hlávkové zelí',emoji:'🫙',desc:'Klasická hlava – osvědčená volba',price:90,size:'malá',stock:20},
-  {id:6,name:'Hlávkové zelí+',emoji:'⭐',desc:'Prémiová hlava – o stupeň výš',price:110,size:'velká',stock:20},
+  {id:3,name:'Šťáva 30ml',emoji:'🧃',desc:'Čerstvě lisovaná šťáva 30ml – rychlé osvěžení',price:130,size:'malá',stock:15,hasFlavor:true},
+  {id:4,name:'Šťáva 60ml',emoji:'🍹',desc:'Čerstvě lisovaná šťáva 60ml – pořádná dávka vitamínů',price:220,size:'velká',stock:15,hasFlavor:true},
+  {id:5,name:'Obyčejná hlava',emoji:'🫙',desc:'Klasická hlava – osvědčená volba',price:90,size:'malá',stock:15},
+  {id:6,name:'Lepší hlava',emoji:'⭐',desc:'Prémiová hlava – o stupeň výš',price:110,size:'velká',stock:15},
 ];
 
+let selectedDay = todayIdx;
 let cart = [];
-let reservations = JSON.parse(localStorage.getItem('svaciny_reservations') || '[]');
+let payMethod = 'place';
+let reservations = [];
+try { reservations = JSON.parse(localStorage.getItem('bufet_res')||'[]'); } catch(e) { reservations = []; }
 let resCounter = reservations.length ? Math.max(...reservations.map(r=>r.id))+1 : 1;
 let adminLoggedIn = false;
 let adminFilter = 'all';
 
-// ── INIT ──────────────────────────────────────────
-function init() { renderDays(); renderMenu(); renderReservations(); }
-
-// ── DAYS ──────────────────────────────────────────
-function renderDays() {
-  document.getElementById('days').innerHTML = DAYS.map((d,i)=>
-    `<button class="day-btn ${i===selectedDay?'active':''}" onclick="selectDay(${i})">${d}</button>`
-  ).join('');
+function saveReservations() {
+  try { localStorage.setItem('bufet_res', JSON.stringify(reservations)); } catch(e) {}
 }
-function selectDay(i) { selectedDay=i; renderDays(); renderMenu(); }
 
-// ── MENU ──────────────────────────────────────────
-function renderMenu() {
+// ── CURSOR ───────────────────────────────
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('button,a,.day-chip,.menu-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.classList.add('hovered');ring.classList.add('hovered');});
+  el.addEventListener('mouseleave',()=>{cur.classList.remove('hovered');ring.classList.remove('hovered');});
+});
+
+// ── SCROLL ───────────────────────────────
+window.addEventListener('scroll',()=>{
+  document.getElementById('header').classList.toggle('scrolled',window.scrollY>60);
+  document.querySelectorAll('.reveal').forEach(el=>{
+    if(el.getBoundingClientRect().top < window.innerHeight-80) el.classList.add('visible');
+  });
+});
+// initial reveal
+setTimeout(()=>document.querySelectorAll('.reveal').forEach(el=>{
+  if(el.getBoundingClientRect().top < window.innerHeight-80) el.classList.add('visible');
+}),100);
+
+// ── DAYS ─────────────────────────────────
+function renderDays(){
+  document.getElementById('dayTrack').innerHTML = DAYS.map((d,i)=>`
+    <button class="day-chip${i===selectedDay?' active':''}${i===todayIdx?' day-today':''}" onclick="selectDay(${i})">
+      <span>${d.name}</span>
+    </button>`).join('');
+}
+function selectDay(i){ selectedDay=i; renderDays(); renderMenu(); }
+
+// ── MENU ─────────────────────────────────
+function renderMenu(){
   document.getElementById('menuGrid').innerHTML = MENU.map((item,idx)=>{
     const inCart = cart.some(c=>c.id===item.id&&c.day===selectedDay);
+    const cartItem = cart.find(c=>c.id===item.id&&c.day===selectedDay);
+    const pct = Math.round((item.stock/20)*100);
+    const low = item.stock<=5;
+    const flavorHtml = item.hasFlavor ? `
+      <div class="flavor-wrap">
+        <label class="flavor-label">🍋 Chuť / příchuť</label>
+        <input class="flavor-input" id="flavor-${item.id}-${selectedDay}"
+          type="text" placeholder="např. pomeranč, jablko, jahoda…"
+          value="${cartItem&&cartItem.flavor?cartItem.flavor:''}"
+          oninput="updateFlavor(${item.id},${selectedDay},this.value)" />
+      </div>` : '';
     return `
-    <div class="card" style="animation-delay:${idx*0.06}s">
-      <div class="card-emoji">
-        ${item.emoji}
-        <div class="card-size-badge ${item.size==='velká'?'large':''}">${item.size}</div>
+    <div class="menu-card" style="animation-delay:${idx*0.07}s">
+      <div class="card-top">
+        <div class="card-emoji-wrap">${item.emoji}</div>
+        <div class="card-badges">
+          <span class="badge badge-size-${item.size==='velká'?'large':'small'}">${item.size}</span>
+          ${low?`<span class="badge badge-stock">⚠ ${item.stock} zbývá</span>`:''}
+        </div>
       </div>
       <div class="card-body">
         <div class="card-name">${item.name}</div>
         <div class="card-desc">${item.desc}</div>
-        <div class="stock-info ${item.stock<=6?'stock-low':''}">
-          ${item.stock<=6?'⚠️':'✓'} ${item.stock} ks zbývá
+        <div class="stock-bar-wrap">
+          <div class="stock-label"><span>Dostupnost</span><span>${item.stock}/20</span></div>
+          <div class="stock-bar"><div class="stock-fill${low?' low':''}" style="width:${pct}%"></div></div>
         </div>
-        <div class="card-footer" style="margin-top:0.7rem">
-          <div class="card-price">${item.price} Kč <span>/ ks</span></div>
-          <button class="add-btn ${inCart?'added':''}" onclick="addToCart(${item.id})">
+        ${flavorHtml}
+        <div class="card-footer" style="margin-top:1.1rem">
+          <div>
+            <div class="card-price">${item.price}<span class="card-price-unit">Kč</span></div>
+          </div>
+          <button class="add-circle${inCart?' added':''}" onclick="addToCart(${item.id})">
             ${inCart?'✓':'+'}
           </button>
         </div>
       </div>
-    </div>`
+    </div>`;
   }).join('');
 }
 
-// ── CART ──────────────────────────────────────────
-function addToCart(itemId) {
-  const item = MENU.find(m=>m.id===itemId);
-  const existing = cart.find(c=>c.id===itemId&&c.day===selectedDay);
-  if (existing) existing.qty=(existing.qty||1)+1;
-  else cart.push({...item,day:selectedDay,dayName:DAYS[selectedDay],qty:1});
-  updateCartUI(); renderMenu();
-  showToast(`${item.emoji} ${item.name} přidána!`);
+// ── CART ─────────────────────────────────
+function addToCart(id){
+  const item=MENU.find(m=>m.id===id);
+  const ex=cart.find(c=>c.id===id&&c.day===selectedDay);
+  const flavorEl=document.getElementById(`flavor-${id}-${selectedDay}`);
+  const flavor=flavorEl?flavorEl.value.trim():'';
+  if(ex){ ex.qty++; if(flavor) ex.flavor=flavor; }
+  else cart.push({...item,day:selectedDay,dayName:DAYS[selectedDay].name,qty:1,flavor});
+  updateCart(); renderMenu();
+  popBadge();
+  showToast(`${item.emoji} ${item.name} přidána!`,'success');
 }
-function removeFromCart(itemId,day) {
-  cart=cart.filter(c=>!(c.id===itemId&&c.day===day));
-  updateCartUI(); renderMenu();
+function updateFlavor(id,day,val){
+  const item=cart.find(c=>c.id===id&&c.day===day);
+  if(item) item.flavor=val.trim();
 }
-function changeQty(itemId,day,delta) {
-  const item=cart.find(c=>c.id===itemId&&c.day===day);
+function changeQty(id,day,d){
+  const item=cart.find(c=>c.id===id&&c.day===day);
   if(!item)return;
-  item.qty=(item.qty||1)+delta;
-  if(item.qty<=0) removeFromCart(itemId,day);
-  else updateCartUI();
+  item.qty+=d;
+  if(item.qty<=0) cart=cart.filter(c=>!(c.id===id&&c.day===day));
+  updateCart(); renderMenu();
 }
-function updateCartUI() {
-  const total=cart.reduce((s,c)=>s+c.price*(c.qty||1),0);
-  const count=cart.reduce((s,c)=>s+(c.qty||1),0);
-  document.getElementById('cartCount').textContent=count;
-  document.getElementById('cartTotal').textContent=total+' Kč';
-  const itemsEl=document.getElementById('cartItems');
-  if(cart.length===0){
-    itemsEl.innerHTML=`<div class="cart-empty"><div class="empty-icon">🥗</div><p>Košík je prázdný.<br>Vyber si svačinu!</p></div>`;
-  } else {
-    itemsEl.innerHTML=cart.map(c=>`
-      <div class="cart-item">
-        <div class="ci-emoji">${c.emoji}</div>
-        <div class="ci-info">
-          <div class="ci-name">${c.name}</div>
-          <div class="ci-day">${c.dayName}</div>
-          <div class="ci-price">${c.price*(c.qty||1)} Kč</div>
-        </div>
-        <div class="ci-qty">
-          <button class="qty-btn" onclick="changeQty(${c.id},${c.day},-1)">−</button>
-          <span class="qty-num">${c.qty||1}</span>
-          <button class="qty-btn" onclick="changeQty(${c.id},${c.day},1)">+</button>
-        </div>
-      </div>`).join('');
+function popBadge(){
+  const b=document.getElementById('cartBadge');
+  b.classList.remove('pop');
+  void b.offsetWidth;
+  b.classList.add('pop');
+}
+function updateCart(){
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cartBadge').textContent=count;
+  document.getElementById('totalAmount').innerHTML=`${total} <span>Kč</span>`;
+  document.getElementById('confirmBtn').disabled=cart.length===0;
+
+  const el=document.getElementById('drawerItems');
+  if(!cart.length){
+    el.innerHTML=`<div class="empty-cart"><div class="empty-icon">🥗</div><div class="empty-title">Košík je prázdný</div><div class="empty-sub">Přidej si něco dobrého</div></div>`;
+    return;
   }
-  document.getElementById('reserveBtn').disabled=cart.length===0;
-}
-function toggleCart() {
-  const sb=document.getElementById('cartSidebar');
-  const ov=document.getElementById('overlay');
-  sb.classList.toggle('open'); ov.classList.toggle('open');
-  document.body.style.overflow=sb.classList.contains('open')?'hidden':'';
-  updateCartUI();
+  el.innerHTML=cart.map(c=>`
+    <div class="cart-item">
+      <div class="ci-icon">${c.emoji}</div>
+      <div class="ci-info">
+        <div class="ci-name">${c.name}</div>
+        <div class="ci-day">${c.dayName}${c.flavor?` · <span style="color:var(--gold);opacity:0.9">🍋 ${c.flavor}</span>`:''}</div>
+        <div class="ci-sub-price">${c.price} Kč / ks</div>
+      </div>
+      <div class="ci-controls">
+        <button class="ci-qty-btn" onclick="changeQty(${c.id},${c.day},-1)">−</button>
+        <span class="ci-qty">${c.qty}</span>
+        <button class="ci-qty-btn" onclick="changeQty(${c.id},${c.day},1)">+</button>
+      </div>
+      <div class="ci-price">${c.price*c.qty} Kč</div>
+    </div>`).join('');
+
 }
 
-// ── RESERVATION ───────────────────────────────────
-async function confirmReservation() {
+// ── DRAWER ───────────────────────────────
+function toggleDrawer(){
+  const d=document.getElementById('cartDrawer');
+  const o=document.getElementById('drawerOverlay');
+  const open=d.classList.toggle('open');
+  o.classList.toggle('open',open);
+  document.body.style.overflow=open?'hidden':'';
+  if(open) updateCart();
+}
+
+// ── CONFIRM ──────────────────────────────
+async function confirmReservation(){
   const name=document.getElementById('studentName').value.trim();
   if(!name){
     const inp=document.getElementById('studentName');
-    inp.style.borderColor='#e07a5f'; inp.focus();
-    setTimeout(()=>inp.style.borderColor='',1500); return;
+    inp.classList.add('err');
+    inp.focus();
+    setTimeout(()=>inp.classList.remove('err'),1500);
+    return;
   }
-  const total=cart.reduce((s,c)=>s+c.price*(c.qty||1),0);
+  const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
   const now=new Date();
   const time=now.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'});
   const date=now.toLocaleDateString('cs-CZ');
   const id=resCounter++;
+  const res={id,name,items:[...cart],total,time,date,payMethod};
 
-  const reservation={id,name,items:[...cart],total,time,date};
-  reservations.push(reservation);
-  localStorage.setItem('svaciny_reservations',JSON.stringify(reservations));
+  const btn=document.getElementById('confirmBtn');
+  btn.classList.add('loading'); btn.disabled=true;
 
-  // Send email
-  if(CONFIGURED){
-    const btn=document.getElementById('reserveBtn');
-    btn.classList.add('sending'); btn.disabled=true;
-    const itemsList=cart.map(c=>`• ${c.qty}× ${c.name} (${c.dayName}) – ${c.price*c.qty} Kč`).join('\n');
-    const message=`🧾 NOVÁ REZERVACE #${id}\n\nJméno žáka: ${name}\nDatum: ${date} v ${time}\n\nObjednávka:\n${itemsList}\n\n💰 Celkem: ${total} Kč\n\n---\nŠkolní Svačiny`;
-    try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        reservation_id: id,
-        student_name: name,
-        message,
-        total: total+' Kč',
-        date,
-        time
-      });
-      showToast('🎉 Rezervace potvrzena a email odeslán!');
-    } catch(e) {
-      showToast('⚠️ Rezervace uložena, email se nepodařilo odeslat', true);
-    }
-    btn.classList.remove('sending'); btn.disabled=false;
-  } else {
-    showToast('🎉 Rezervace uložena! (Email není nakonfigurován)');
+  // Email
+  const itemsList=cart.map(c=>`• ${c.qty}× ${c.name}${c.flavor?` – chuť: ${c.flavor}`:''} (${c.dayName}) – ${c.price*c.qty} Kč`).join('\n');
+  const payLabel='Na místě (předem)';
+  const message=`🧾 NOVÁ REZERVACE #${id}\n\nJméno: ${name}\nDatum: ${date} v ${time}\nPlatba: ${payLabel}\n\nObjednávka:\n${itemsList}\n\n💰 Celkem: ${total} Kč\n\n— Bufet Školní Svačiny`;
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{reservation_id:id,student_name:name,message,total:total+' Kč',date,time});
+    showToast('🎉 Rezervace potvrzena! Email odeslán.','success');
+  } catch(e){
+    showToast('⚠️ Rezervace uložena, email selhal','error');
   }
 
+  reservations.push(res);
+  saveReservations();
   cart=[];
-  updateCartUI();
-  toggleCart();
+  updateCart();
+  toggleDrawer();
   renderReservations();
   renderMenu();
+  if(adminLoggedIn) renderAdminPanel();
+  btn.classList.remove('loading'); btn.disabled=false;
 }
 
-// ── STUDENT RESERVATIONS ──────────────────────────
-function renderReservations() {
-  const el=document.getElementById('reservationsList');
-  if(reservations.length===0){
-    el.innerHTML=`<div class="no-res">🍃 Zatím žádné rezervace. Přidej svačinu do košíku!</div>`; return;
+// ── RESERVATIONS ─────────────────────────
+function renderReservations(){
+  const el=document.getElementById('resList');
+  if(!reservations.length){
+    el.innerHTML=`<div class="no-res"><div class="no-res-icon">📋</div>Zatím žádné rezervace.<br>Přidej si svačinu!</div>`;
+    return;
   }
   el.innerHTML=reservations.slice().reverse().map((r,i)=>{
-    const itemsText=r.items.map(c=>`${c.qty}× ${c.name} (${c.dayName})`).join(', ');
+    const items=r.items.map(c=>`${c.qty}× ${c.name}${c.flavor?` (${c.flavor})`:''} (${c.dayName})`).join(', ');
+    const payBadge='<span class="res-payment-badge rpb-place">💵 Platba předem</span>';
     return `
-    <div class="res-card" style="animation-delay:${i*0.05}s">
+    <div class="res-card" style="animation-delay:${i*0.04}s">
       <div class="res-num">#${r.id}</div>
       <div class="res-info">
         <div class="res-name">${r.name}</div>
-        <div class="res-detail">Rezervováno ${r.date} v ${r.time}</div>
-        <div class="res-items">${itemsText}</div>
+        <div class="res-meta">${r.date} v ${r.time}</div>
+        <div class="res-items">${items}</div>
       </div>
-      <div class="res-price">${r.total} Kč</div>
-      <button class="res-delete" onclick="deleteReservation(${r.id})" title="Zrušit">🗑</button>
-    </div>`
+      <div class="res-right">
+        ${payBadge}
+        <div class="res-price">${r.total} Kč</div>
+        <button class="res-del" onclick="deleteRes(${r.id})">🗑</button>
+      </div>
+    </div>`;
   }).join('');
 }
-function deleteReservation(id) {
+function deleteRes(id){
   reservations=reservations.filter(r=>r.id!==id);
-  localStorage.setItem('svaciny_reservations',JSON.stringify(reservations));
+  saveReservations();
   renderReservations();
   if(adminLoggedIn) renderAdminPanel();
-  showToast('🗑 Rezervace zrušena');
+  showToast('Rezervace zrušena','error');
 }
 
-// ── ADMIN ─────────────────────────────────────────
-function openAdmin() {
-  document.getElementById('adminModal').classList.add('open');
+// ── ADMIN ────────────────────────────────
+function openAdmin(){
+  document.getElementById('adminOverlay').classList.add('open');
   if(adminLoggedIn) renderAdminPanel();
   else renderLoginForm();
 }
-function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
+function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('open'); }
 
-function renderLoginForm() {
-  document.getElementById('modalTitle').textContent='🔐 Admin panel';
-  document.getElementById('modalBody').innerHTML=`
-    <div class="login-form">
-      <div class="lock-icon">🔒</div>
-      <h3>Přihlášení</h3>
-      <p>Zadej heslo pro přístup do administrace kantýny</p>
-      <input type="password" id="adminPwd" placeholder="Heslo" onkeydown="if(event.key==='Enter')checkLogin()" />
-      <button class="login-btn" onclick="checkLogin()">Přihlásit se</button>
-      <div class="login-error" id="loginError">❌ Špatné heslo, zkus to znovu</div>
+function renderLoginForm(){
+  document.getElementById('adminModalTitle').textContent='Přihlášení';
+  document.getElementById('adminModalBody').innerHTML=`
+    <div class="login-wrap">
+      <div class="login-lock">🔐</div>
+      <div class="login-title">Admin přístup</div>
+      <div class="login-sub">Zadej heslo pro přístup do administrace kantýny</div>
+      <div class="input-group">
+        <input class="input-field" id="adminPwd" type="password" placeholder="Heslo" onkeydown="if(event.key==='Enter')tryLogin()">
+      </div>
+      <button class="confirm-btn" onclick="tryLogin()" style="margin-top:0.5rem">
+        <span class="btn-label">Přihlásit se</span>
+      </button>
+      <div class="login-err" id="loginErr">❌ Špatné heslo</div>
     </div>`;
 }
-
-function checkLogin() {
-  const pwd=document.getElementById('adminPwd').value;
-  if(pwd===ADMIN_PASSWORD){
-    adminLoggedIn=true;
-    renderAdminPanel();
+function tryLogin(){
+  if(document.getElementById('adminPwd').value===ADMIN_PASSWORD){
+    adminLoggedIn=true; renderAdminPanel();
   } else {
-    document.getElementById('adminPwd').classList.add('error');
-    document.getElementById('loginError').style.display='block';
+    document.getElementById('adminPwd').classList.add('err');
+    document.getElementById('loginErr').style.display='block';
   }
 }
 
-function renderAdminPanel() {
-  document.getElementById('modalTitle').textContent='📋 Přehled rezervací';
-  const filtered = adminFilter==='all' ? reservations :
-    reservations.filter(r=>r.items.some(i=>i.day===parseInt(adminFilter)));
+function renderAdminPanel(){
+  document.getElementById('adminModalTitle').textContent='📋 Přehled rezervací';
+  const filtered=adminFilter==='all'?reservations:reservations.filter(r=>r.items.some(i=>i.day===parseInt(adminFilter)));
+  const totalRev=reservations.reduce((s,r)=>s+r.total,0);
+  const totalItems=reservations.reduce((s,r)=>s+r.items.reduce((ss,i)=>ss+i.qty,0),0);
 
-  const totalRevenue=reservations.reduce((s,r)=>s+r.total,0);
-  const totalItems=reservations.reduce((s,r)=>s+r.items.reduce((ss,i)=>ss+(i.qty||1),0),0);
-
-  document.getElementById('modalBody').innerHTML=`
+  document.getElementById('adminModalBody').innerHTML=`
     <div class="admin-stats">
-      <div class="stat-box"><div class="stat-num">${reservations.length}</div><div class="stat-label">Rezervací</div></div>
-      <div class="stat-box"><div class="stat-num">${totalItems}</div><div class="stat-label">Svačin</div></div>
-      <div class="stat-box"><div class="stat-num">${totalRevenue} Kč</div><div class="stat-label">Celkem</div></div>
+      <div class="astat"><div class="astat-n">${reservations.length}</div><div class="astat-l">Rezervací</div></div>
+      <div class="astat"><div class="astat-n">${totalItems}</div><div class="astat-l">Svačin</div></div>
+      <div class="astat"><div class="astat-n">${totalRev} Kč</div><div class="astat-l">Celkem</div></div>
     </div>
     <div class="admin-filter">
-      <button class="filter-btn ${adminFilter==='all'?'active':''}" onclick="setFilter('all')">Všechny dny</button>
-      ${DAYS.map((d,i)=>`<button class="filter-btn ${adminFilter==i?'active':''}" onclick="setFilter(${i})">${d}</button>`).join('')}
+      <button class="af-btn${adminFilter==='all'?' active':''}" onclick="setAF('all')">Všechny dny</button>
+      ${DAYS.map((d,i)=>`<button class="af-btn${adminFilter==i?' active':''}" onclick="setAF(${i})">${d.name}</button>`).join('')}
     </div>
-    <div id="adminResList">
-      ${filtered.length===0
-        ? '<div class="admin-empty">🍃 Žádné rezervace pro tento den</div>'
-        : filtered.slice().reverse().map(r=>{
-          const itemsText=r.items.map(c=>`<span class="arc-day-badge">${c.dayName}</span>${c.qty}× ${c.name}`).join(' · ');
+    <div>
+      ${!filtered.length
+        ?'<div class="admin-empty">Žádné rezervace pro tento výběr</div>'
+        :filtered.slice().reverse().map(r=>{
+          const items=r.items.map(c=>`<span style="opacity:0.6">${c.dayName}:</span> ${c.qty}× ${c.name}${c.flavor?` <span style="color:var(--gold)">· ${c.flavor}</span>`:''}`).join(' · ');
+          const payLabel=r.payMethod==='online'?'💳 Online':'💵 Na místě';
           return `
-          <div class="admin-res-card">
-            <div class="arc-top">
-              <div>
-                <span class="arc-name">${r.name}</span>
-                <span class="arc-id"> · #${r.id}</span>
-              </div>
-              <div class="arc-price">${r.total} Kč</div>
+          <div class="admin-res-item">
+            <div class="ari-top">
+              <div><span class="ari-name">${r.name}</span> <span class="ari-id">#${r.id}</span></div>
+              <span class="ari-price">${r.total} Kč</span>
             </div>
-            <div class="arc-items">${itemsText}</div>
-            <div class="arc-meta">📅 ${r.date} v ${r.time}
-              <button style="margin-left:8px;background:transparent;border:none;cursor:pointer;color:#e07a5f;font-size:0.8rem" onclick="deleteReservation(${r.id})">🗑 Zrušit</button>
+            <div class="ari-items">${items}</div>
+            <div class="ari-meta">
+              <span>${r.date} v ${r.time} · 💵 Platba předem</span>
+              <button class="ari-del" onclick="deleteRes(${r.id})">🗑 Zrušit</button>
             </div>
-          </div>`
+          </div>`;
         }).join('')
       }
     </div>
-    <button class="logout-btn" onclick="adminLogout()">🚪 Odhlásit se</button>`;
+    <button class="admin-logout" onclick="adminLogout()">🚪 Odhlásit se</button>`;
 }
+function setAF(f){ adminFilter=f; renderAdminPanel(); }
+function adminLogout(){ adminLoggedIn=false; renderLoginForm(); }
 
-function setFilter(f) { adminFilter=f; renderAdminPanel(); }
-function adminLogout() { adminLoggedIn=false; renderLoginForm(); }
-
-// ── TOAST ─────────────────────────────────────────
-function showToast(msg, isError=false) {
+// ── TOAST ────────────────────────────────
+function showToast(msg,type='success'){
   const t=document.getElementById('toast');
   t.textContent=msg;
-  t.className='toast'+(isError?' error':'');
+  t.className=`toast ${type}`;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>t.classList.remove('show'),3200);
 }
 
-init();
+// ── INIT ─────────────────────────────────
+renderDays();
+renderMenu();
+renderReservations();
+updateCart();
 </script>
 
 </body>
