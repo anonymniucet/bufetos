@@ -317,12 +317,10 @@ header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid
 </div>
 <div class="toast" id="TT"></div>
 <script>
-
-var EJS_SVC  = ‘service_xubh9sh’;
-var EJS_TMPL = ‘template_nwe34pn’;
-var EJS_KEY  = ‘5EtQMEMwJV2JB6RyY’;
-var ADMIN_PW = ‘kantyna2024’;
-emailjs.init(EJS_KEY);
+var EJS_SVC  = 'service_xubh9sh';
+var EJS_TMPL = 'template_nwe34pn';
+var EJS_KEY  = '5EtQMEMwJV2JB6RyY';
+var ADMIN_PW = 'kantyna2024';
 
 var DNAMES = [‘Pondeli’,‘Utery’,‘Streda’,‘Ctvrtek’,‘Patek’];
 var BNAMES = [‘Mala prestávka’,‘Velka prestávka’];
@@ -547,17 +545,17 @@ var c=cart[k];
 lines.push(’- ‘+c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’)+’ (’+c.dayN+’) = ’+(c.pr*c.qty)+’ Kc’);
 }
 var msg=‘REZERVACE #’+rid+’\nJmeno: ‘+nm+’\nDatum: ‘+dt+’ v ‘+tm+’\nPrestávka: ‘+brkLbl+’\n\n’+lines.join(’\n’)+’\n\nCelkem: ‘+tot+’ Kc’;
-emailjs.send(EJS_SVC,EJS_TMPL,{reservation_id:rid,student_name:nm,message:msg,total:tot+’ Kc’,date:dt,time:tm})
-.then(function(){
-toast(‘Rezervace potvrzena!’,‘ok’);
-}, function(){
-toast(‘Rezervace ulozena (email selhal)’,‘err’);
-}).then(function(){
+function afterOrder(){
 orders.push(rec); sv(‘B_RES’,orders);
 cart=[]; updCart(); closeCart(); renderRes(); renderMenu();
 if(isAdmin) renderAdmin();
 btn.className=‘ok-btn’; btn.disabled=false;
-});
+}
+try{
+emailjs.send(EJS_SVC,EJS_TMPL,{reservation_id:rid,student_name:nm,message:msg,total:tot+’ Kc’,date:dt,time:tm})
+.then(function(){ toast(‘Rezervace potvrzena!’,‘ok’); afterOrder(); })
+.catch(function(){ toast(‘Rezervace ulozena (email selhal)’,‘err’); afterOrder(); });
+}catch(e){ toast(‘Rezervace ulozena’,‘ok’); afterOrder(); }
 }
 
 function sbadge(s){
@@ -893,6 +891,8 @@ t.textContent=msg; t.className=‘toast ‘+(type||‘ok’)+’ show’;
 clearTimeout(t._tt); t._tt=setTimeout(function(){ t.className=‘toast’; },3000);
 }
 
+function initApp(){
+try{ if(typeof emailjs !== ‘undefined’) emailjs.init(EJS_KEY); }catch(e){}
 renderDays();
 renderMenu();
 renderRes();
@@ -900,7 +900,13 @@ renderFavs();
 updCart();
 checkClosed();
 loadAnn();
-
+}
+if(document.readyState === ‘loading’){
+document.addEventListener(‘DOMContentLoaded’, initApp);
+} else {
+initApp();
+}
 </script>
+
 </body>
 </html>
