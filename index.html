@@ -621,30 +621,28 @@ transition: transform .32s cubic-bezier(.3,0,.1,1);
   </div>
 
   <div class="sec">
-    <div class="sec-hdr">
-      <div class="sec-ico">🍫</div>
-      <div class="sec-name">Krémové tyčinky</div>
-      <div class="sec-line"></div>
-    </div>
+    <div class="sec-hdr"><div class="sec-ico">🍃</div><div class="sec-name">Kratom</div><div class="sec-line"></div></div>
     <div class="grid" id="grid-kra"></div>
   </div>
 
   <div class="sec">
-    <div class="sec-hdr">
-      <div class="sec-ico">💧</div>
-      <div class="sec-name">Liquidy</div>
-      <div class="sec-line"></div>
-    </div>
+    <div class="sec-hdr"><div class="sec-ico">💧</div><div class="sec-name">Liquid</div><div class="sec-line"></div></div>
     <div class="grid" id="grid-liquid"></div>
   </div>
 
   <div class="sec">
-    <div class="sec-hdr">
-      <div class="sec-ico">💨</div>
-      <div class="sec-name">Hlavy &amp; Vapy</div>
-      <div class="sec-line"></div>
-    </div>
-    <div class="grid" id="grid-vapo"></div>
+    <div class="sec-hdr"><div class="sec-ico">🔩</div><div class="sec-name">Hlavy</div><div class="sec-line"></div></div>
+    <div class="grid" id="grid-hlavy"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr"><div class="sec-ico">💨</div><div class="sec-name">Vapa</div><div class="sec-line"></div></div>
+    <div class="grid" id="grid-vapa"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr"><div class="sec-ico">🫙</div><div class="sec-name">Pytle</div><div class="sec-line"></div></div>
+    <div class="grid" id="grid-pytle"></div>
   </div>
 </div>
 
@@ -714,14 +712,28 @@ transition: transform .32s cubic-bezier(.3,0,.1,1);
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyppfYslsc-NmlO-QwWefRiZI6rPPhJBPLyQbpFpk1Z7cqr8CNHqkjr98-8hIAawnD/exec';
 
 const PRODUCTS = [
-  { id:'kra-s',  name:'Malý Kra',       desc:'Do 3 lžiček',              emoji:'🍫', price:20,  cat:'kra',    tag:'Do 3 lžiček' },
-  { id:'kra-l',  name:'Velký Kra',      desc:'4+ lžiček',                emoji:'🍫', price:40,  cat:'kra',    tag:'4+ lžiček' },
-  { id:'liq-10', name:'Liquid 10 ml',   desc:'50 mg nikotinu',           emoji:'💧', price:115, cat:'liquid', tag:'10 ml · 50mg' },
-  { id:'liq-30', name:'Liquid 30 ml',   desc:'50 mg nikotinu',           emoji:'💧', price:225, cat:'liquid', tag:'30 ml · 50mg' },
-  { id:'hd-std', name:'Hlava standard', desc:'Standardní hlava do vapu', emoji:'🔩', price:85,  cat:'vapo',   tag:'Standard' },
-  { id:'hd-pro', name:'Hlava premium',  desc:'Prémiová hlava do vapu',   emoji:'⚙️', price:100, cat:'vapo',   tag:'Premium' },
-  { id:'vp-std', name:'Vapo',           desc:'Standardní vapo',          emoji:'💨', price:400, cat:'vapo',   tag:'Standard' },
-  { id:'vp-thc', name:'THC Vapo',       desc:'THC vapo',                 emoji:'🌿', price:450, cat:'vapo',   tag:'THC' },
+  // Kratom
+  { id:'kra-s',    name:'Malý Kra',          desc:'Do 3 lžiček',          emoji:'🍃', price:'cena', cat:'kra',    tag:'Malý' },
+  { id:'kra-l',    name:'Velký Kra',         desc:'4+ lžiček',            emoji:'🍃', price:'cena', cat:'kra',    tag:'Velký' },
+  // Liquid
+  { id:'liq-10',   name:'Liquid 10 ml',      desc:'Nikotinový liquid',    emoji:'💧', price:'cena', cat:'liquid', tag:'10 ml' },
+  { id:'liq-30',   name:'Liquid 30 ml',      desc:'Nikotinový liquid',    emoji:'💧', price:'cena', cat:'liquid', tag:'30 ml' },
+  // Hlavy
+  { id:'hd-std',   name:'Hlava normální',    desc:'Standardní hlava',     emoji:'🔩', price:'cena', cat:'hlavy',  tag:'Standard' },
+  { id:'hd-pro',   name:'Hlava lepší',       desc:'Prémiová hlava',       emoji:'⚙️', price:'cena', cat:'hlavy',  tag:'Premium' },
+  // Vapa
+  { id:'vp-thc',   name:'THC Vapo',          desc:'THC vapo',             emoji:'🌿', price:'cena', cat:'vapa',   tag:'THC' },
+  { id:'vp-oxva',  name:'Oxva Vapo',         desc:'Oxva vapo',            emoji:'💨', price:'cena', cat:'vapa',   tag:'Oxva' },
+  { id:'vp-j600',  name:'Jednorázové 600',   desc:'600 potahů',           emoji:'🚬', price:'cena', cat:'vapa',   tag:'600 potahů' },
+  { id:'vp-j20k',  name:'Jednorázové 20000', desc:'20 000 potahů',       emoji:'🚬', price:'cena', cat:'vapa',   tag:'20 000 potahů' },
+  // Pytle
+  { id:'py-sbs',   name:'Siberky slim',      desc:'Nikotinové sáčky',     emoji:'🫙', price:'cena', cat:'pytle',  tag:'Slim' },
+  { id:'py-sbc',   name:'Siberky cihly',     desc:'Nikotinové sáčky',     emoji:'🫙', price:'cena', cat:'pytle',  tag:'Cihly' },
+  { id:'py-vel',   name:'Vela',              desc:'Nikotinové sáčky',     emoji:'🫙', price:'cena', cat:'pytle',  tag:'Vela' },
+  { id:'py-kil',   name:'Killa',             desc:'Nikotinové sáčky',     emoji:'🫙', price:'cena', cat:'pytle',  tag:'Killa' },
+  { id:'py-pab',   name:'Pablo',             desc:'Nikotinové sáčky',     emoji:'🫙', price:'cena', cat:'pytle',  tag:'Pablo' },
+  { id:'py-kur',   name:'Kurwy',             desc:'Nikotinové sáčky',     emoji:'🫙', price:'cena', cat:'pytle',  tag:'Kurwy' },
+  { id:'py-zyn',   name:'Zyni',              desc:'Nikotinové sáčky',     emoji:'🫙', price:'cena', cat:'pytle',  tag:'Zyni' },
 ];
 
 const TIMES = [
@@ -760,11 +772,12 @@ function checkGate() {
 
 /* ── PRODUCTS ── */
 function renderProducts() {
-  const map = { kra:'grid-kra', liquid:'grid-liquid', vapo:'grid-vapo' };
+  const map = { kra:'grid-kra', liquid:'grid-liquid', hlavy:'grid-hlavy', vapa:'grid-vapa', pytle:'grid-pytle' };
   Object.values(map).forEach(id => $(id).innerHTML = '');
   PRODUCTS.forEach(p => {
     const d = document.createElement('div');
     d.className = 'card';
+    const priceLabel = typeof p.price === 'number' ? p.price + ' Kč' : p.price;
     d.innerHTML = `
       <div class="card-top">
         <div class="card-emo">${p.emoji}</div>
@@ -775,7 +788,7 @@ function renderProducts() {
         <div class="card-desc">${p.desc}</div>
       </div>
       <div class="card-bot">
-        <div class="card-price">${p.price} Kč</div>
+        <div class="card-price">${priceLabel}</div>
         <button class="card-add" onclick="event.stopPropagation();addToCart('${p.id}')">+</button>
       </div>`;
     d.onclick = () => addToCart(p.id);
@@ -800,7 +813,8 @@ function removeFromCart(id) {
 function cartTotal() {
   return Object.entries(cart).reduce((s,[id,q]) => {
     const p = PRODUCTS.find(x=>x.id===id);
-    return s + (p ? p.price*q : 0);
+    const price = typeof p?.price === 'number' ? p.price : 0;
+    return s + price * q;
   }, 0);
 }
 function cartCount() { return Object.values(cart).reduce((a,b)=>a+b,0); }
