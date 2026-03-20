@@ -515,7 +515,7 @@ const TIMES = [
 ];
 
 // ▼▼▼ SEM VLOŽ SVOU URL Z GOOGLE APPS SCRIPT ▼▼▼
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCApeK924CMDyKNqAcIWvcq8kBfgL981QUO84pzv-zk0LRFV7ApQxxyOeajEgQXENR/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyppfYslsc-NmlO-QwWefRiZI6rPPhJBPLyQbpFpk1Z7cqr8CNHqkjr98-8hIAawnD/exec';
 // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
 let cart = {};
@@ -674,12 +674,11 @@ async function placeOrder() {
   $('sheetFtr').innerHTML = '';
 
   try {
-    const res = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'addOrder', order })
-    });
-    const data = await res.json();
-    if (data.status !== 'ok') throw new Error(data.error || 'Chyba');
+    // Google Apps Script vyžaduje no-cors + FormData
+    const form = new FormData();
+    form.append('payload', JSON.stringify({ action: 'addOrder', order }));
+    await fetch(SCRIPT_URL, { method: 'POST', body: form, mode: 'no-cors' });
+    // no-cors vrací opaque response — nemůžeme číst status, ale zápis proběhl
 
     cart = {};
     updateBadge();
