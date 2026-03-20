@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bufet - Skolni svaciny</title>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -317,9 +316,6 @@ header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid
 </div>
 <div class="toast" id="TT"></div>
 <script>
-var EJS_SVC  = 'service_xubh9sh';
-var EJS_TMPL = 'template_nwe34pn';
-var EJS_KEY  = '5EtQMEMwJV2JB6RyY';
 var ADMIN_PW = 'kantyna2024';
 
 var DNAMES = [‘Pondeli’,‘Utery’,‘Streda’,‘Ctvrtek’,‘Patek’];
@@ -545,17 +541,11 @@ var c=cart[k];
 lines.push(’- ‘+c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’)+’ (’+c.dayN+’) = ’+(c.pr*c.qty)+’ Kc’);
 }
 var msg=‘REZERVACE #’+rid+’\nJmeno: ‘+nm+’\nDatum: ‘+dt+’ v ‘+tm+’\nPrestávka: ‘+brkLbl+’\n\n’+lines.join(’\n’)+’\n\nCelkem: ‘+tot+’ Kc’;
-function afterOrder(){
 orders.push(rec); sv(‘B_RES’,orders);
 cart=[]; updCart(); closeCart(); renderRes(); renderMenu();
 if(isAdmin) renderAdmin();
 btn.className=‘ok-btn’; btn.disabled=false;
-}
-try{
-emailjs.send(EJS_SVC,EJS_TMPL,{reservation_id:rid,student_name:nm,message:msg,total:tot+’ Kc’,date:dt,time:tm})
-.then(function(){ toast(‘Rezervace potvrzena!’,‘ok’); afterOrder(); })
-.catch(function(){ toast(‘Rezervace ulozena (email selhal)’,‘err’); afterOrder(); });
-}catch(e){ toast(‘Rezervace ulozena’,‘ok’); afterOrder(); }
+toast(‘Rezervace potvrzena!’,‘ok’);
 }
 
 function sbadge(s){
@@ -892,7 +882,6 @@ clearTimeout(t._tt); t._tt=setTimeout(function(){ t.className=‘toast’; },300
 }
 
 function initApp(){
-try{ if(typeof emailjs !== ‘undefined’) emailjs.init(EJS_KEY); }catch(e){}
 renderDays();
 renderMenu();
 renderRes();
