@@ -514,19 +514,13 @@ const TIMES = [
   'Po skončení (14:00)',
 ];
 
-const STORAGE_KEY = 'bufetOrders_v2';
+// ▼▼▼ SEM VLOŽ SVOU URL Z GOOGLE APPS SCRIPT ▼▼▼
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCApeK924CMDyKNqAcIWvcq8kBfgL981QUO84pzv-zk0LRFV7ApQxxyOeajEgQXENR/exec';
+// ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
 let cart = {};
 
-/* helpers */
 const $ = id => document.getElementById(id);
-function getOrders() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-  catch(e) { return []; }
-}
-function saveOrders(arr) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-}
 
 /* ── RENDER PRODUCTS ── */
 function renderProducts() {
@@ -645,7 +639,7 @@ function renderSheet() {
 }
 
 /* ── PLACE ORDER ── */
-function placeOrder() {
+async function placeOrder() {
   const name = $('oName').value.trim();
   const cls  = $('oClass').value.trim();
   const time = $('oTime').value;
@@ -658,13 +652,11 @@ function placeOrder() {
 
   const total = cartTotal();
 
-  // Build order object
   const order = {
-    id: Date.now(),
     name, cls, time,
     items: entries.map(([id,qty]) => {
       const p = PRODUCTS.find(x=>x.id===id);
-      return { name: p.name, qty, unitPrice: p.price, lineTotal: p.price * qty };
+      return { name: p.name, qty, lineTotal: p.price * qty };
     }),
     total,
     timestamp: new Date().toLocaleString('cs-CZ', {
@@ -673,25 +665,42 @@ function placeOrder() {
     })
   };
 
-  // ✅ SAVE TO LOCALSTORAGE — read existing, prepend new, write back
-  const existing = getOrders();
-  existing.unshift(order);
-  saveOrders(existing);
-
-  // Reset cart
-  cart = {};
-  updateBadge();
-
-  // Show confirmation inside sheet
+  // Show loading
   $('sheetBody').innerHTML = `
-    <div class="success-state">
-      <div class="success-icon">🎉</div>
-      <h3>Objednávka přijata!</h3>
-      <p>Tvoje objednávka byla úspěšně zapsána.<br>Přines peníze hotově při vyzvednutí.</p>
-      <div class="success-amount">${total} Kč</div>
-      <p>⏰ Vyzvednutí: <strong>${time}</strong></p>
+    <div class="cart-empty-state">
+      <div>⏳</div>
+      <div>Odesílám objednávku…</div>
     </div>`;
-  $('sheetFtr').innerHTML = `<button class="btn-order" onclick="closeCart()">Zavřít</button>`;
+  $('sheetFtr').innerHTML = '';
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'addOrder', order })
+    });
+    const data = await res.json();
+    if (data.status !== 'ok') throw new Error(data.error || 'Chyba');
+
+    cart = {};
+    updateBadge();
+
+    $('sheetBody').innerHTML = `
+      <div class="success-state">
+        <div class="success-icon">🎉</div>
+        <h3>Objednávka přijata!</h3>
+        <p>Tvoje objednávka byla úspěšně zapsána.<br>Přines peníze hotově při vyzvednutí.</p>
+        <div class="success-amount">${total} Kč</div>
+        <p>⏰ Vyzvednutí: <strong>${time}</strong></p>
+      </div>`;
+    $('sheetFtr').innerHTML = `<button class="btn-order" onclick="closeCart()">Zavřít</button>`;
+  } catch(e) {
+    $('sheetBody').innerHTML = `
+      <div class="cart-empty-state">
+        <div>❌</div>
+        <div>Nepodařilo se odeslat.<br>Zkontroluj připojení a zkus znovu.</div>
+      </div>`;
+    $('sheetFtr').innerHTML = `<button class="btn-order" onclick="renderSheet()">← Zpět do košíku</button>`;
+  }
 }
 
 /* ── ADMIN ── */
@@ -717,38 +726,57 @@ function closeAdmin() {
   $('adminPage').style.display = 'none';
   $('shopPage').style.display = 'block';
 }
-function clearOrders() {
+async function clearOrders() {
   if (!confirm('Smazat všechny objednávky? Tato akce je nevratná.')) return;
-  saveOrders([]);
-  renderAdmin();
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'clearOrders' })
+    });
+    const data = await res.json();
+    if (data.status === 'ok') renderAdmin();
+    else showToast('❌ Nepodařilo se smazat');
+  } catch(e) { showToast('❌ Chyba připojení'); }
 }
-function renderAdmin() {
-  const orders = getOrders();
-  const rev = orders.reduce((s,o) => s + o.total, 0);
-  $('statCount').textContent = orders.length;
-  $('statRev').textContent   = rev.toLocaleString('cs-CZ') + ' Kč';
+async function renderAdmin() {
+  $('ordersList').innerHTML = `<div class="empty-orders"><div>⏳</div><div>Načítám objednávky…</div></div>`;
+  $('statCount').textContent = '…';
+  $('statRev').textContent = '…';
 
-  if (!orders.length) {
-    $('ordersList').innerHTML = `<div class="empty-orders"><div>📭</div><div>Žádné objednávky zatím</div></div>`;
-    return;
-  }
-  $('ordersList').innerHTML = orders.map(o => `
-    <div class="order-card">
-      <div class="oc-hdr">
-        <div>
-          <div class="oc-name">👤 ${o.name}</div>
-          <div class="oc-meta">Třída: <strong>${o.cls}</strong> &nbsp;·&nbsp; ⏰ ${o.time}</div>
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getOrders');
+    const data = await res.json();
+    if (data.status !== 'ok') throw new Error(data.error);
+
+    const orders = data.orders;
+    const rev = orders.reduce((s,o) => s + Number(o.total), 0);
+    $('statCount').textContent = orders.length;
+    $('statRev').textContent   = rev.toLocaleString('cs-CZ') + ' Kč';
+
+    if (!orders.length) {
+      $('ordersList').innerHTML = `<div class="empty-orders"><div>📭</div><div>Žádné objednávky zatím</div></div>`;
+      return;
+    }
+    $('ordersList').innerHTML = orders.map(o => `
+      <div class="order-card">
+        <div class="oc-hdr">
+          <div>
+            <div class="oc-name">👤 ${o.name}</div>
+            <div class="oc-meta">Třída: <strong>${o.cls}</strong> &nbsp;·&nbsp; ⏰ ${o.time}</div>
+          </div>
+          <div class="oc-time">${o.timestamp}</div>
         </div>
-        <div class="oc-time">${o.timestamp}</div>
-      </div>
-      <div class="oc-items">
-        ${o.items.map(i => `<span class="oc-tag">${i.name} ×${i.qty}</span>`).join('')}
-      </div>
-      <div class="oc-foot">
-        <span>K zaplacení při vyzvednutí</span>
-        <span class="oc-total">${o.total} Kč</span>
-      </div>
-    </div>`).join('');
+        <div class="oc-items">
+          ${o.itemsText.split(', ').map(i => `<span class="oc-tag">${i}</span>`).join('')}
+        </div>
+        <div class="oc-foot">
+          <span>K zaplacení při vyzvednutí</span>
+          <span class="oc-total">${Number(o.total).toLocaleString('cs-CZ')} Kč</span>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    $('ordersList').innerHTML = `<div class="empty-orders"><div>❌</div><div>Nepodařilo se načíst.<br>Zkontroluj SCRIPT_URL v kódu.</div></div>`;
+  }
 }
 
 /* ── TOAST ── */
