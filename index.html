@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Bufet</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g:     #16a34a;
+  --gd:    #15803d;
+  --gdd:   #0d5c2e;
+  --gl:    #22c55e;
+  --gpal:  #f0fdf4;
+  --gmid:  #bbf7d0;
+  --gsof:  #dcfce7;
+  --white: #fff;
+  --bg:    #f8fafc;
+  --text:  #0f172a;
+  --sub:   #475569;
+  --muted: #94a3b8;
+  --line:  #e2e8f0;
+  --red:   #ef4444;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════
+GATE SCREEN — covers everything
+═══════════════════════════════ */
+#gate {
+position: fixed; inset: 0; z-index: 9999;
+background: linear-gradient(160deg, #0a3d20 0%, #0d5c2e 45%, #14532d 100%);
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+padding: 24px;
+transition: opacity .5s ease;
+}
+#gate.out { opacity: 0; pointer-events: none; }
+
+.gate-card {
+width: 100%; max-width: 360px;
+text-align: center;
+}
+.gate-emblem {
+width: 80px; height: 80px; border-radius: 24px;
+background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+border: 1px solid rgba(255,255,255,.2);
+display: flex; align-items: center; justify-content: center;
+font-size: 2.4rem;
+margin: 0 auto 24px;
+box-shadow: 0 8px 32px rgba(0,0,0,.2);
+}
+.gate-title {
+font-size: 2rem; font-weight: 900;
+color: #fff; letter-spacing: -.5px; margin-bottom: 6px;
+}
+.gate-sub {
+font-size: .92rem; color: rgba(255,255,255,.5);
+margin-bottom: 36px; font-weight: 400;
+}
+.gate-field {
+position: relative; margin-bottom: 12px;
+}
+.gate-field input {
+width: 100%; padding: 16px 18px;
+background: rgba(255,255,255,.1);
+border: 1.5px solid rgba(255,255,255,.18);
+border-radius: 14px; color: #fff;
+font-family: inherit; font-size: 1rem; font-weight: 600;
+outline: none; text-align: center;
+transition: border-color .2s, background .2s;
+-webkit-text-security: disc;
+}
+.gate-field input::placeholder { color: rgba(255,255,255,.3); font-weight: 400; }
+.gate-field input:focus {
+border-color: rgba(255,255,255,.45);
+background: rgba(255,255,255,.16);
+}
+.gate-field input.shake { animation: shake .35s ease; border-color: rgba(252,165,165,.7) !important; }
+@keyframes shake {
+0%,100% { transform: translateX(0); }
+20% { transform: translateX(-8px); }
+40% { transform: translateX(8px); }
+60% { transform: translateX(-5px); }
+80% { transform: translateX(5px); }
+}
+.gate-err {
+font-size: .82rem; color: #fca5a5; font-weight: 600;
+min-height: 22px; margin-bottom: 4px; text-align: center;
+}
+.gate-btn {
+width: 100%; padding: 16px;
+background: #fff; color: var(–gdd);
+border: none; border-radius: 14px;
+font-family: inherit; font-size: 1rem; font-weight: 800;
+cursor: pointer; transition: all .2s;
+box-shadow: 0 4px 20px rgba(0,0,0,.2);
+margin-top: 4px;
+}
+.gate-btn:hover { background: var(–gsof); transform: translateY(-1px); }
+.gate-btn:active { transform: scale(.98); }
+
+/* ═══════════════════════════════
+MAIN APP (hidden until gate pass)
+═══════════════════════════════ */
+#app { display: none; }
+#app.visible { display: block; }
+
+/* ── HEADER ── */
+header {
+position: sticky; top: 0; z-index: 80;
+background: rgba(255,255,255,.94);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-bottom: 1px solid var(–line);
+}
+.hdr {
+max-width: 1100px; margin: 0 auto;
+padding: 0 16px; height: 58px;
+display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.logo {
+display: flex; align-items: center; gap: 9px;
+font-size: 1.2rem; font-weight: 800; color: var(–text);
+letter-spacing: -.4px;
+}
+.logo-icon {
+width: 32px; height: 32px; border-radius: 9px;
+background: linear-gradient(135deg, var(–gd), var(–gl));
+display: flex; align-items: center; justify-content: center;
+font-size: .95rem;
+box-shadow: 0 2px 8px rgba(22,163,74,.35);
+}
+.hdr-r { display: flex; gap: 8px; align-items: center; }
+
+.btn-cart {
+display: flex; align-items: center; gap: 6px;
+background: var(–g); color: #fff;
+border: none; border-radius: 50px;
+padding: 9px 18px;
+font-family: inherit; font-size: .9rem; font-weight: 700;
+cursor: pointer; position: relative;
+transition: all .2s;
+box-shadow: 0 2px 10px rgba(22,163,74,.3);
+white-space: nowrap;
+}
+.btn-cart:active { transform: scale(.97); }
+.badge {
+position: absolute; top: -5px; right: -5px;
+background: var(–red); color: #fff;
+font-size: .65rem; font-weight: 900;
+min-width: 18px; height: 18px; border-radius: 9px; padding: 0 4px;
+display: none; align-items: center; justify-content: center;
+border: 2px solid #fff;
+}
+.btn-ghost {
+background: transparent; border: 1.5px solid var(–line); color: var(–sub);
+border-radius: 50px; padding: 7px 13px;
+font-family: inherit; font-size: .82rem; font-weight: 600;
+cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.btn-ghost:hover { border-color: var(–g); color: var(–g); }
+
+/* ── SHOP PAGE ── */
+#shopPage  { max-width: 1100px; margin: 0 auto; padding: 0 14px 110px; }
+#adminPage { max-width: 1100px; margin: 0 auto; padding: 20px 14px 80px; display: none; }
+
+/* ── HERO ── */
+.hero {
+margin: 16px 0 18px;
+background: linear-gradient(145deg, #0a3d20 0%, var(–gdd) 55%, #166534 100%);
+border-radius: 22px; padding: 28px 22px 26px;
+color: #fff; position: relative; overflow: hidden;
+}
+.hero-ring {
+position: absolute; top: -60px; right: -60px;
+width: 220px; height: 220px; border-radius: 50%;
+border: 40px solid rgba(255,255,255,.06);
+}
+.hero-ring2 {
+position: absolute; bottom: -80px; left: -30px;
+width: 180px; height: 180px; border-radius: 50%;
+border: 30px solid rgba(34,197,94,.1);
+}
+.hero-chip {
+display: inline-flex; align-items: center; gap: 5px;
+background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
+border-radius: 50px; padding: 4px 12px;
+font-size: .75rem; font-weight: 700; letter-spacing: .3px;
+margin-bottom: 12px; position: relative; z-index: 1;
+}
+.hero h1 {
+font-size: clamp(1.55rem, 5.5vw, 2.2rem); font-weight: 900;
+line-height: 1.12; letter-spacing: -.5px;
+margin-bottom: 7px; position: relative; z-index: 1;
+}
+.hero p { font-size: .88rem; opacity: .65; position: relative; z-index: 1; }
+
+/* ── NOTICE ── */
+.notice {
+background: var(–white); border: 1px solid var(–gmid);
+border-radius: 12px; padding: 12px 14px; margin-bottom: 24px;
+display: flex; align-items: center; gap: 10px;
+box-shadow: 0 1px 4px rgba(22,163,74,.08);
+}
+.notice-led {
+width: 9px; height: 9px; border-radius: 50%;
+background: var(–g); flex-shrink: 0;
+box-shadow: 0 0 0 3px var(–gsof);
+}
+.notice p { font-size: .84rem; color: var(–sub); font-weight: 500; line-height: 1.4; }
+.notice p strong { color: var(–text); }
+
+/* ── SECTION ── */
+.sec { margin-bottom: 30px; }
+.sec-hdr { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.sec-ico {
+width: 30px; height: 30px; border-radius: 8px;
+background: var(–gsof);
+display: flex; align-items: center; justify-content: center;
+font-size: .9rem; flex-shrink: 0;
+}
+.sec-name { font-size: .95rem; font-weight: 800; }
+.sec-line { flex: 1; height: 1px; background: var(–line); }
+
+/* ── PRODUCT GRID ── */
+.grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 10px;
+}
+@media (min-width: 520px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 820px) { .grid { grid-template-columns: repeat(4, 1fr); gap: 14px; } }
+
+/* ── PRODUCT CARD ── */
+.card {
+background: var(–white);
+border-radius: 16px; border: 1.5px solid var(–line);
+padding: 14px 13px 13px;
+display: flex; flex-direction: column; gap: 10px;
+cursor: pointer; position: relative;
+transition: transform .2s, box-shadow .2s, border-color .2s;
+-webkit-user-select: none; user-select: none;
+box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.card:active { transform: scale(.97); }
+@media (hover: hover) {
+.card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.1); border-color: var(–gmid); }
+}
+
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
+.card-emo {
+width: 46px; height: 46px; border-radius: 13px;
+background: var(–gpal); border: 1px solid var(–gsof);
+display: flex; align-items: center; justify-content: center;
+font-size: 1.55rem; flex-shrink: 0;
+}
+.card-pill {
+background: var(–gsof); color: var(–gd);
+font-size: .67rem; font-weight: 800; letter-spacing: .2px;
+padding: 3px 8px; border-radius: 50px; white-space: nowrap;
+margin-top: 3px;
+}
+.card-name {
+font-size: .92rem; font-weight: 800; line-height: 1.25;
+margin-bottom: 3px; color: var(–text);
+}
+.card-desc { font-size: .74rem; color: var(–muted); line-height: 1.4; }
+.card-bot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+.card-price {
+font-size: 1.18rem; font-weight: 900; color: var(–gd);
+letter-spacing: -.3px;
+}
+.card-add {
+width: 36px; height: 36px; border-radius: 11px;
+background: var(–g); color: #fff; border: none;
+font-size: 1.35rem; cursor: pointer; flex-shrink: 0;
+display: flex; align-items: center; justify-content: center;
+transition: background .15s, transform .15s;
+box-shadow: 0 2px 8px rgba(22,163,74,.35);
+}
+.card-add:active { transform: scale(.88); background: var(–gd); }
+@media (hover: hover) { .card-add:hover { background: var(–gd); } }
+
+/* ── OVERLAY ── */
+.overlay {
+position: fixed; inset: 0;
+background: rgba(10,20,15,.65);
+z-index: 150; opacity: 0; pointer-events: none;
+transition: opacity .3s;
+backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.overlay.on { opacity: 1; pointer-events: all; }
+
+/* ── CART SHEET ── */
+.csheet {
+position: fixed; bottom: 0; left: 0; right: 0;
+background: var(–white); border-radius: 26px 26px 0 0;
+z-index: 160; max-height: 93dvh;
+display: flex; flex-direction: column;
+transform: translateY(100%);
+transition: transform .4s cubic-bezier(.3,0,.1,1);
+box-shadow: 0 -4px 40px rgba(0,0,0,.14);
+}
+.csheet.open { transform: translateY(0); }
+@media (min-width: 640px) {
+.csheet {
+left: auto; right: 0; top: 0; bottom: 0; width: 430px;
+border-radius: 0; max-height: 100dvh;
+transform: translateX(100%);
+}
+.csheet.open { transform: translateX(0); }
+}
+.pull-bar {
+width: 38px; height: 4px; border-radius: 2px;
+background: var(–line); margin: 11px auto 0; flex-shrink: 0;
+}
+@media (min-width: 640px) { .pull-bar { display: none; } }
+
+.csheet-hdr {
+padding: 16px 18px 14px;
+border-bottom: 1px solid var(–line);
+display: flex; align-items: center; justify-content: space-between;
+flex-shrink: 0;
+}
+.csheet-title { font-size: 1.1rem; font-weight: 800; }
+.btn-x {
+width: 30px; height: 30px; border-radius: 50%;
+background: var(–bg); border: none; color: var(–sub);
+font-size: .88rem; font-weight: 700; cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+transition: background .15s;
+}
+.btn-x:hover { background: var(–line); }
+
+.csheet-body { flex: 1; overflow-y: auto; padding: 6px 18px; -webkit-overflow-scrolling: touch; }
+.csheet-ftr  { padding: 14px 18px 30px; border-top: 1px solid var(–line); flex-shrink: 0; }
+
+/* empty cart */
+.cempty {
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+height: 200px; gap: 10px; color: var(–muted);
+}
+.cempty-ico {
+width: 60px; height: 60px; border-radius: 16px;
+background: var(–bg); font-size: 1.8rem;
+display: flex; align-items: center; justify-content: center;
+}
+.cempty p { font-size: .88rem; font-weight: 600; }
+
+/* cart item */
+.ci {
+display: flex; align-items: center; gap: 11px;
+padding: 12px 0; border-bottom: 1px solid var(–line);
+}
+.ci-emo {
+width: 42px; height: 42px; border-radius: 11px;
+background: var(–gpal); font-size: 1.35rem;
+display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ci-info { flex: 1; min-width: 0; }
+.ci-name { font-size: .9rem; font-weight: 700; }
+.ci-price { font-size: .8rem; color: var(–gd); font-weight: 700; margin-top: 2px; }
+.ci-ctrl { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.qb {
+width: 30px; height: 30px; border-radius: 9px;
+border: 1.5px solid var(–line); background: var(–bg);
+font-size: .95rem; font-weight: 700; color: var(–text);
+cursor: pointer; display: flex; align-items: center; justify-content: center;
+transition: all .15s;
+}
+.qb:active { transform: scale(.9); border-color: var(–g); color: var(–g); }
+@media (hover: hover) { .qb:hover { border-color: var(–g); color: var(–g); } }
+.qty { font-size: .92rem; font-weight: 900; min-width: 20px; text-align: center; }
+
+/* total + form */
+.total-box {
+display: flex; align-items: center; justify-content: space-between;
+background: var(–gpal); border: 1px solid var(–gmid);
+border-radius: 12px; padding: 13px 15px; margin-bottom: 14px;
+}
+.total-lbl { font-size: .82rem; color: var(–sub); font-weight: 600; }
+.total-val { font-size: 1.4rem; font-weight: 900; color: var(–gd); letter-spacing: -.4px; }
+
+.oform { display: flex; flex-direction: column; gap: 9px; }
+.orow  { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ff    { display: flex; flex-direction: column; gap: 4px; }
+.ff label {
+font-size: .71rem; font-weight: 800; color: var(–muted);
+text-transform: uppercase; letter-spacing: .5px;
+}
+.ff input, .ff select {
+border: 1.5px solid var(–line); border-radius: 11px;
+padding: 12px 13px; font-family: inherit;
+font-size: .93rem; color: var(–text); background: var(–bg);
+font-weight: 600; outline: none;
+transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.ff input:focus, .ff select:focus {
+border-color: var(–g); background: var(–white);
+box-shadow: 0 0 0 3px rgba(22,163,74,.12);
+}
+.ff input::placeholder { color: var(–muted); font-weight: 400; }
+
+.btn-order {
+background: linear-gradient(135deg, var(–gdd), var(–g));
+color: #fff; border: none; border-radius: 13px;
+padding: 15px; font-family: inherit;
+font-size: 1rem; font-weight: 800;
+cursor: pointer; width: 100%; margin-top: 2px;
+transition: all .2s;
+box-shadow: 0 4px 16px rgba(22,163,74,.35);
+letter-spacing: -.2px;
+}
+.btn-order:active { transform: scale(.98); }
+@media (hover: hover) {
+.btn-order:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(22,163,74,.45); }
+}
+
+/* states */
+.sbox {
+display: flex; flex-direction: column; align-items: center;
+justify-content: center; padding: 36px 20px; gap: 11px; text-align: center;
+}
+.sbox-ico {
+width: 68px; height: 68px; border-radius: 20px;
+display: flex; align-items: center; justify-content: center; font-size: 2rem;
+margin-bottom: 4px;
+}
+.sbox-ico.ok  { background: var(–gsof); }
+.sbox-ico.err { background: #fef2f2; }
+.sbox-ico.ld  { background: var(–bg); }
+.sbox h3 { font-size: 1.1rem; font-weight: 800; }
+.sbox p  { font-size: .84rem; color: var(–sub); line-height: 1.5; }
+.amount-pill {
+background: var(–gpal); border: 1.5px solid var(–gmid);
+border-radius: 12px; padding: 10px 28px;
+font-size: 1.45rem; font-weight: 900; color: var(–gd);
+letter-spacing: -.5px; margin: 4px 0;
+}
+.time-pill {
+background: var(–bg); border: 1px solid var(–line);
+border-radius: 8px; padding: 7px 14px;
+font-size: .84rem; font-weight: 700; color: var(–text);
+}
+
+/* ── MODAL ── */
+.modal-bg {
+position: fixed; inset: 0;
+background: rgba(10,20,15,.7);
+z-index: 200; display: none;
+align-items: flex-end; justify-content: center;
+backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.modal-bg.on { display: flex; }
+@media (min-width: 480px) { .modal-bg { align-items: center; padding: 20px; } }
+
+.modal {
+background: var(–white); border-radius: 24px 24px 0 0;
+padding: 10px 22px 36px; width: 100%; max-width: 400px;
+animation: slideUp .32s cubic-bezier(.3,0,.1,1);
+}
+@media (min-width: 480px) { .modal { border-radius: 22px; padding-top: 26px; animation: popIn .28s ease; } }
+
+.modal-pull {
+width: 36px; height: 4px; border-radius: 2px;
+background: var(–line); margin: 0 auto 22px;
+}
+@media (min-width: 480px) { .modal-pull { display: none; } }
+
+.modal-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.modal-hdr h2 { font-size: 1.15rem; font-weight: 800; }
+.modal-err { font-size: .82rem; color: var(–red); font-weight: 600; margin-bottom: 10px; display: none; }
+
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes popIn   { from { opacity:0; transform: scale(.94) translateY(10px); } to { opacity:1; transform:none; } }
+
+/* ── ADMIN ── */
+.admin-hdr {
+display: flex; align-items: center; justify-content: space-between;
+margin-bottom: 18px; gap: 10px; flex-wrap: wrap;
+}
+.admin-hdr h1 { font-size: 1.35rem; font-weight: 900; letter-spacing: -.4px; }
+.admin-btns { display: flex; gap: 8px; }
+.bsm {
+border-radius: 10px; padding: 8px 14px;
+font-family: inherit; font-size: .83rem; font-weight: 700;
+cursor: pointer; transition: all .2s; border: 1.5px solid transparent;
+}
+.bsm.out { background: var(–white); border-color: var(–line); color: var(–text); }
+.bsm.out:hover { border-color: var(–g); color: var(–g); }
+.bsm.red { background: #fef2f2; border-color: #fecaca; color: var(–red); }
+.bsm.red:hover { background: #fee2e2; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.stat {
+background: var(–white); border-radius: 14px;
+border: 1px solid var(–line); padding: 15px 16px;
+box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.stat-l { font-size: .7rem; font-weight: 800; color: var(–muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.stat-v { font-size: 1.65rem; font-weight: 900; color: var(–gd); letter-spacing: -.5px; line-height: 1; }
+
+.ocard {
+background: var(–white); border-radius: 14px;
+border: 1px solid var(–line); padding: 15px 16px; margin-bottom: 10px;
+box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.ocard-top {
+display: flex; align-items: flex-start; justify-content: space-between;
+gap: 8px; margin-bottom: 10px;
+}
+.ocard-name { font-size: .98rem; font-weight: 800; margin-bottom: 2px; }
+.ocard-meta { font-size: .78rem; color: var(–sub); font-weight: 500; }
+.ocard-ts {
+font-size: .72rem; color: var(–muted); background: var(–bg);
+border: 1px solid var(–line); border-radius: 8px;
+padding: 4px 8px; white-space: nowrap; flex-shrink: 0; font-weight: 500;
+}
+.ocard-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.otag {
+background: var(–gsof); color: var(–gd);
+border-radius: 8px; padding: 4px 10px;
+font-size: .78rem; font-weight: 700;
+}
+.ocard-foot {
+display: flex; align-items: center; justify-content: space-between;
+padding-top: 10px; border-top: 1px solid var(–line);
+font-size: .8rem; color: var(–muted); font-weight: 500;
+}
+.ocard-total { font-size: 1rem; font-weight: 900; color: var(–gd); letter-spacing: -.3px; }
+
+.no-orders {
+display: flex; flex-direction: column; align-items: center;
+padding: 50px 20px; gap: 10px; color: var(–muted); text-align: center;
+}
+.no-orders-ico {
+width: 60px; height: 60px; border-radius: 16px;
+background: var(–bg); font-size: 1.8rem;
+display: flex; align-items: center; justify-content: center;
+}
+.no-orders p { font-size: .88rem; font-weight: 600; }
+
+/* ── TOAST ── */
+.toast {
+position: fixed; bottom: 22px; left: 50%;
+transform: translateX(-50%) translateY(80px);
+background: var(–text); color: #fff;
+padding: 11px 20px; border-radius: 50px;
+font-size: .86rem; font-weight: 700;
+z-index: 400; pointer-events: none; white-space: nowrap;
+box-shadow: 0 8px 30px rgba(0,0,0,.25);
+transition: transform .32s cubic-bezier(.3,0,.1,1);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+
+</head>
+<body>
+
+<!-- ══ GATE SCREEN ══ -->
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-emblem">🌿</div>
+    <div class="gate-title">Bufet</div>
+    <div class="gate-sub">Zadej přístupový kód</div>
+    <div class="gate-field">
+      <input type="password" id="gateInput" placeholder="Přístupový kód…"
+             onkeydown="if(event.key==='Enter')checkGate()" autocomplete="off">
+    </div>
+    <div class="gate-err" id="gateErr"></div>
+    <button class="gate-btn" onclick="checkGate()">Vstoupit →</button>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+
+<div id="app">
+
+<header>
+  <div class="hdr">
+    <div class="logo">
+      <div class="logo-icon">🌿</div>
+      Bufet
+    </div>
+    <div class="hdr-r">
+      <button class="btn-cart" onclick="openCart()">
+        🛒 Košík
+        <span class="badge" id="badge"></span>
+      </button>
+      <button class="btn-ghost" onclick="openAdminLogin()">Admin</button>
+    </div>
+  </div>
+</header>
+
+<!-- SHOP -->
+
+<div id="shopPage">
+  <div class="hero">
+    <div class="hero-ring"></div>
+    <div class="hero-ring2"></div>
+    <div class="hero-chip">🏫 Školní bufet</div>
+    <h1>Objednej si snadno &amp; rychle</h1>
+    <p>Vyber zboží, přidej do košíku a odešli objednávku</p>
+  </div>
+
+  <div class="notice">
+    <div class="notice-led"></div>
+    <p><strong>Platba předem hotově</strong> — peníze přines při vyzvednutí</p>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-ico">🍫</div>
+      <div class="sec-name">Krémové tyčinky</div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid" id="grid-kra"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-ico">💧</div>
+      <div class="sec-name">Liquidy</div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid" id="grid-liquid"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-ico">💨</div>
+      <div class="sec-name">Hlavy &amp; Vapy</div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="grid" id="grid-vapo"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+
+<div id="adminPage">
+  <div class="admin-hdr">
+    <h1>📋 Objednávky</h1>
+    <div class="admin-btns">
+      <button class="bsm red" onclick="clearOrders()">🗑 Smazat vše</button>
+      <button class="bsm out" onclick="closeAdmin()">← Zpět</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-l">Objednávky</div>
+      <div class="stat-v" id="statCount">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-l">Celkový obrat</div>
+      <div class="stat-v" id="statRev">—</div>
+    </div>
+  </div>
+  <div id="ordersList"></div>
+</div>
+
+<!-- OVERLAY -->
+
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+<!-- CART SHEET -->
+
+<div class="csheet" id="cartSheet">
+  <div class="pull-bar"></div>
+  <div class="csheet-hdr">
+    <div class="csheet-title">Košík 🛒</div>
+    <button class="btn-x" onclick="closeCart()">✕</button>
+  </div>
+  <div class="csheet-body" id="sheetBody"></div>
+  <div class="csheet-ftr" id="sheetFtr"></div>
+</div>
+
+<!-- ADMIN MODAL -->
+
+<div class="modal-bg" id="adminModal">
+  <div class="modal">
+    <div class="modal-pull"></div>
+    <div class="modal-hdr">
+      <h2>🔐 Admin přihlášení</h2>
+      <button class="btn-x" onclick="closeAdminModal()">✕</button>
+    </div>
+    <div class="ff" style="margin-bottom:12px;">
+      <label>Heslo</label>
+      <input type="password" id="adminPass" placeholder="Zadej heslo…"
+             onkeydown="if(event.key==='Enter')loginAdmin()">
+    </div>
+    <div class="modal-err" id="adminErr">❌ Špatné heslo, zkus znovu</div>
+    <button class="btn-order" onclick="loginAdmin()">Přihlásit se</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyppfYslsc-NmlO-QwWefRiZI6rPPhJBPLyQbpFpk1Z7cqr8CNHqkjr98-8hIAawnD/exec';
+
+const PRODUCTS = [
+  { id:'kra-s',  name:'Malý Kra',       desc:'Do 3 lžiček',              emoji:'🍫', price:20,  cat:'kra',    tag:'Do 3 lžiček' },
+  { id:'kra-l',  name:'Velký Kra',      desc:'4+ lžiček',                emoji:'🍫', price:40,  cat:'kra',    tag:'4+ lžiček' },
+  { id:'liq-10', name:'Liquid 10 ml',   desc:'50 mg nikotinu',           emoji:'💧', price:115, cat:'liquid', tag:'10 ml · 50mg' },
+  { id:'liq-30', name:'Liquid 30 ml',   desc:'50 mg nikotinu',           emoji:'💧', price:225, cat:'liquid', tag:'30 ml · 50mg' },
+  { id:'hd-std', name:'Hlava standard', desc:'Standardní hlava do vapu', emoji:'🔩', price:85,  cat:'vapo',   tag:'Standard' },
+  { id:'hd-pro', name:'Hlava premium',  desc:'Prémiová hlava do vapu',   emoji:'⚙️', price:100, cat:'vapo',   tag:'Premium' },
+  { id:'vp-std', name:'Vapo',           desc:'Standardní vapo',          emoji:'💨', price:400, cat:'vapo',   tag:'Standard' },
+  { id:'vp-thc', name:'THC Vapo',       desc:'THC vapo',                 emoji:'🌿', price:450, cat:'vapo',   tag:'THC' },
+];
+
+const TIMES = [
+  'Přestávka 1 (9:00)',
+  'Přestávka 2 (10:55)',
+  'Přestávka 3 (12:50)',
+  'Po skončení (14:00)',
+];
+
+let cart = {};
+const $ = id => document.getElementById(id);
+
+/* ── GATE ── */
+function checkGate() {
+  const val = $('gateInput').value.trim();
+  if (val === 'darkkladenka') {
+    const g = $('gate');
+    g.classList.add('out');
+    setTimeout(() => {
+      g.style.display = 'none';
+      $('app').classList.add('visible');
+    }, 480);
+  } else {
+    const inp = $('gateInput');
+    const err = $('gateErr');
+    inp.classList.add('shake');
+    inp.value = '';
+    err.textContent = '❌ Špatný kód, zkus znovu';
+    setTimeout(() => {
+      inp.classList.remove('shake');
+      err.textContent = '';
+    }, 2600);
+    inp.focus();
+  }
+}
+
+/* ── PRODUCTS ── */
+function renderProducts() {
+  const map = { kra:'grid-kra', liquid:'grid-liquid', vapo:'grid-vapo' };
+  Object.values(map).forEach(id => $(id).innerHTML = '');
+  PRODUCTS.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = `
+      <div class="card-top">
+        <div class="card-emo">${p.emoji}</div>
+        <div class="card-pill">${p.tag}</div>
+      </div>
+      <div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+      </div>
+      <div class="card-bot">
+        <div class="card-price">${p.price} Kč</div>
+        <button class="card-add" onclick="event.stopPropagation();addToCart('${p.id}')">+</button>
+      </div>`;
+    d.onclick = () => addToCart(p.id);
+    $(map[p.cat]).appendChild(d);
+  });
+}
+
+/* ── CART ── */
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  updateBadge();
+  showToast('Přidáno ✓');
+  if ($('cartSheet').classList.contains('open')) renderSheet();
+}
+function removeFromCart(id) {
+  if (!cart[id]) return;
+  if (cart[id] > 1) cart[id]--;
+  else delete cart[id];
+  updateBadge();
+  renderSheet();
+}
+function cartTotal() {
+  return Object.entries(cart).reduce((s,[id,q]) => {
+    const p = PRODUCTS.find(x=>x.id===id);
+    return s + (p ? p.price*q : 0);
+  }, 0);
+}
+function cartCount() { return Object.values(cart).reduce((a,b)=>a+b,0); }
+function updateBadge() {
+  const n = cartCount();
+  const b = $('badge');
+  b.textContent = n;
+  b.style.display = n > 0 ? 'flex' : 'none';
+}
+
+function openCart() {
+  renderSheet();
+  $('cartSheet').classList.add('open');
+  $('overlay').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  $('cartSheet').classList.remove('open');
+  $('overlay').classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+function renderSheet() {
+  const body = $('sheetBody');
+  const ftr  = $('sheetFtr');
+  const entries = Object.entries(cart).filter(([,q])=>q>0);
+
+  if (!entries.length) {
+    body.innerHTML = `<div class="cempty"><div class="cempty-ico">🛒</div><p>Košík je prázdný</p></div>`;
+    ftr.innerHTML = '';
+    return;
+  }
+
+  body.innerHTML = entries.map(([id,qty]) => {
+    const p = PRODUCTS.find(x=>x.id===id);
+    return `<div class="ci">
+      <div class="ci-emo">${p.emoji}</div>
+      <div class="ci-info">
+        <div class="ci-name">${p.name}</div>
+        <div class="ci-price">${p.price * qty} Kč</div>
+      </div>
+      <div class="ci-ctrl">
+        <button class="qb" onclick="removeFromCart('${id}')">−</button>
+        <span class="qty">${qty}</span>
+        <button class="qb" onclick="addToCart('${id}')">+</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  ftr.innerHTML = `
+    <div class="total-box">
+      <span class="total-lbl">Celkem</span>
+      <span class="total-val">${cartTotal()} Kč</span>
+    </div>
+    <div class="oform">
+      <div class="orow">
+        <div class="ff">
+          <label>Jméno a příjmení</label>
+          <input type="text" id="oName" placeholder="Jan Novák" autocomplete="name">
+        </div>
+        <div class="ff">
+          <label>Třída</label>
+          <input type="text" id="oClass" placeholder="3.A" autocomplete="off">
+        </div>
+      </div>
+      <div class="ff">
+        <label>Čas vyzvednutí</label>
+        <select id="oTime">${TIMES.map(t=>`<option>${t}</option>`).join('')}</select>
+      </div>
+      <button class="btn-order" onclick="placeOrder()">Objednat · ${cartTotal()} Kč</button>
+    </div>`;
+}
+
+/* ── PLACE ORDER ── */
+async function placeOrder() {
+  const name = $('oName').value.trim();
+  const cls  = $('oClass').value.trim();
+  const time = $('oTime').value;
+
+  if (!name) { showToast('⚠️ Zadej své jméno!'); $('oName').focus(); return; }
+  if (!cls)  { showToast('⚠️ Zadej svou třídu!'); $('oClass').focus(); return; }
+
+  const entries = Object.entries(cart).filter(([,q])=>q>0);
+  if (!entries.length) return;
+
+  const total = cartTotal();
+  const order = {
+    name, cls, time,
+    items: entries.map(([id,qty]) => {
+      const p = PRODUCTS.find(x=>x.id===id);
+      return { name: p.name, qty, lineTotal: p.price * qty };
+    }),
+    total,
+    timestamp: new Date().toLocaleString('cs-CZ', {
+      day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'
+    })
+  };
+
+  $('sheetBody').innerHTML = `<div class="sbox"><div class="sbox-ico ld">⏳</div><h3>Odesílám…</h3><p>Chvilku strpení</p></div>`;
+  $('sheetFtr').innerHTML = '';
+
+  try {
+    const form = new FormData();
+    form.append('payload', JSON.stringify({ action: 'addOrder', order }));
+    await fetch(SCRIPT_URL, { method: 'POST', body: form, mode: 'no-cors' });
+
+    cart = {};
+    updateBadge();
+
+    $('sheetBody').innerHTML = `
+      <div class="sbox">
+        <div class="sbox-ico ok">🎉</div>
+        <h3>Objednávka přijata!</h3>
+        <p>Přines peníze hotově při vyzvednutí.</p>
+        <div class="amount-pill">${total} Kč</div>
+        <div class="time-pill">⏰ ${time}</div>
+      </div>`;
+    $('sheetFtr').innerHTML = `<button class="btn-order" onclick="closeCart()">Zavřít</button>`;
+  } catch(e) {
+    $('sheetBody').innerHTML = `
+      <div class="sbox">
+        <div class="sbox-ico err">❌</div>
+        <h3>Nepodařilo se odeslat</h3>
+        <p>Zkontroluj připojení a zkus znovu.</p>
+      </div>`;
+    $('sheetFtr').innerHTML = `<button class="btn-order" onclick="renderSheet()">← Zpět</button>`;
+  }
+}
+
+/* ── ADMIN ── */
+function openAdminLogin() {
+  $('adminModal').classList.add('on');
+  $('adminPass').value = '';
+  $('adminErr').style.display = 'none';
+  setTimeout(() => $('adminPass').focus(), 200);
+}
+function closeAdminModal() { $('adminModal').classList.remove('on'); }
+function loginAdmin() {
+  if ($('adminPass').value === 'kantyna2024') {
+    closeAdminModal();
+    $('shopPage').style.display = 'none';
+    $('adminPage').style.display = 'block';
+    renderAdmin();
+  } else {
+    $('adminErr').style.display = 'block';
+    $('adminPass').select();
+  }
+}
+function closeAdmin() {
+  $('adminPage').style.display = 'none';
+  $('shopPage').style.display = 'block';
+}
+async function clearOrders() {
+  if (!confirm('Smazat všechny objednávky? Tato akce je nevratná.')) return;
+  try {
+    const form = new FormData();
+    form.append('payload', JSON.stringify({ action: 'clearOrders' }));
+    await fetch(SCRIPT_URL, { method: 'POST', body: form, mode: 'no-cors' });
+    showToast('Objednávky smazány ✓');
+    setTimeout(renderAdmin, 1200);
+  } catch(e) { showToast('❌ Chyba připojení'); }
+}
+async function renderAdmin() {
+  $('ordersList').innerHTML = `<div class="no-orders"><div class="no-orders-ico">⏳</div><p>Načítám…</p></div>`;
+  $('statCount').textContent = '…';
+  $('statRev').textContent = '…';
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getOrders');
+    const data = await res.json();
+    if (data.status !== 'ok') throw new Error(data.error);
+
+    const orders = data.orders;
+    const rev = orders.reduce((s,o) => s + Number(o.total), 0);
+    $('statCount').textContent = orders.length;
+    $('statRev').textContent   = rev.toLocaleString('cs-CZ') + ' Kč';
+
+    if (!orders.length) {
+      $('ordersList').innerHTML = `<div class="no-orders"><div class="no-orders-ico">📭</div><p>Žádné objednávky zatím</p></div>`;
+      return;
+    }
+    $('ordersList').innerHTML = orders.map(o => `
+      <div class="ocard">
+        <div class="ocard-top">
+          <div>
+            <div class="ocard-name">👤 ${o.name}</div>
+            <div class="ocard-meta">Třída: <strong>${o.cls}</strong> · ⏰ ${o.time}</div>
+          </div>
+          <div class="ocard-ts">${o.timestamp}</div>
+        </div>
+        <div class="ocard-tags">
+          ${o.itemsText.split(', ').map(i=>`<span class="otag">${i}</span>`).join('')}
+        </div>
+        <div class="ocard-foot">
+          <span>K zaplacení při vyzvednutí</span>
+          <span class="ocard-total">${Number(o.total).toLocaleString('cs-CZ')} Kč</span>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    $('ordersList').innerHTML = `<div class="no-orders"><div class="no-orders-ico">❌</div><p>Nepodařilo se načíst objednávky</p></div>`;
+  }
+}
+
+/* ── TOAST ── */
+let toastTmr;
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTmr);
+  toastTmr = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ── INIT ── */
+renderProducts();
+setTimeout(() => $('gateInput').focus(), 100);
+</script>
+
+</body>
+</html>
