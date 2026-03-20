@@ -405,5 +405,16 @@ function initApp(){renderDays();renderMenu();renderRes();renderFavs();updCart();
 document.addEventListener(‘DOMContentLoaded’,initApp);
 
 </script>
+
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var d = document.createElement('div');
+  d.style = 'position:fixed;top:0;left:0;right:0;background:red;color:#fff;padding:10px;z-index:9999;font-size:14px;font-family:monospace';
+  d.textContent = 'JS ERROR: ' + msg + ' (line ' + line + ')';
+  document.body.appendChild(d);
+  return false;
+};
+</script>
+
 </body>
 </html>
