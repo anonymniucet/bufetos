@@ -135,10 +135,6 @@ header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid
 .ok-btn{width:100%;padding:.9rem;background:var(--g);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
 .ok-btn:hover:not(:disabled){background:var(--gl)}
 .ok-btn:disabled{background:#c8e6d3;color:#7abd99;cursor:not-allowed}
-.ok-btn.loading{pointer-events:none;opacity:.7}
-.sp{display:none}
-.ok-btn.loading .btxt{display:none}
-.ok-btn.loading .sp{display:inline}
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem}
 .modal-bg.open{display:flex}
 .modal{background:#fff;border-radius:16px;width:100%;max-width:740px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.15)}
@@ -257,7 +253,12 @@ header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid
   <div class="hero-tag"><span class="hero-dot"></span> Cerstve kazdy den</div>
   <h1>Skolni <em>svaciny</em></h1>
   <p>Rezervuj si svacinu predem a vyzvednij ji v prestávce u bufetu.</p>
-  <div class="hero-pills"><span class="pill">6 polozek</span><span class="pill">Po-Pa</span><span class="pill">Od 20 Kc</span><span class="pill">Platba predem</span></div>
+  <div class="hero-pills">
+    <span class="pill">6 polozek</span>
+    <span class="pill">Po-Pa</span>
+    <span class="pill">Od 20 Kc</span>
+    <span class="pill">Platba predem</span>
+  </div>
 </div>
 <div class="main">
   <div class="ann-bar" id="AB">
@@ -272,24 +273,39 @@ header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid
     <div style="font-size:1.4rem">🔒</div>
     <div>
       <div style="font-weight:600;color:#c0392b" id="CT">Kantyna zavrena</div>
-      <div style="font-size:.78rem;color:#e07a5f">Objednavky pro tento den nejsou mozne</div>
+      <div style="font-size:.78rem;color:#e07a5f">Objednavky nejsou mozne</div>
     </div>
   </div>
   <div class="favs-row" id="FR"><span class="fav-lbl">Oblibene</span><span id="FC"></span></div>
-  <div class="days-wrap"><div class="days-lbl">Vyber den</div><div class="days-row" id="DR"></div></div>
-  <div class="sec-head"><div class="sec-title">Nabidka</div><div class="sec-cnt" id="MC"></div></div>
+  <div class="days-wrap">
+    <div class="days-lbl">Vyber den</div>
+    <div class="days-row" id="DR"></div>
+  </div>
+  <div class="sec-head">
+    <div class="sec-title">Nabidka</div>
+    <div class="sec-cnt" id="MC"></div>
+  </div>
   <div class="divider"></div>
   <div class="menu-grid" id="MG"></div>
-  <div class="sec-head"><div class="sec-title">Moje rezervace</div><div class="sec-cnt" id="RC"></div></div>
+  <div class="sec-head">
+    <div class="sec-title">Moje rezervace</div>
+    <div class="sec-cnt" id="RC"></div>
+  </div>
   <div class="divider"></div>
   <div id="RL"></div>
 </div>
 <div class="overlay" id="OV" onclick="closeCart()"></div>
 <div class="drawer" id="DW">
-  <div class="drw-hd"><div class="drw-t">Kosik</div><button class="drw-x" onclick="closeCart()">x</button></div>
+  <div class="drw-hd">
+    <div class="drw-t">Kosik</div>
+    <button class="drw-x" onclick="closeCart()">x</button>
+  </div>
   <div class="drw-bd" id="DB"></div>
   <div class="drw-ft">
-    <div class="total-bl"><span class="total-l">Celkem</span><span class="total-v" id="TV">0 Kc</span></div>
+    <div class="total-bl">
+      <span class="total-l">Celkem</span>
+      <span class="total-v" id="TV">0 Kc</span>
+    </div>
     <label class="inp-l">Jmeno a trida</label>
     <input class="inp" id="SN" type="text" placeholder="Jana Novakova, 8.B"/>
     <div class="brk-grp">
@@ -301,601 +317,94 @@ header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid
     </div>
     <div class="pay-box">
       <div style="font-size:1.3rem">💵</div>
-      <div><div class="pay-t">Platba predem v hotovosti</div><div class="pay-s">Zaplat pri vyzvednuti u kantyny</div></div>
+      <div>
+        <div class="pay-t">Platba predem v hotovosti</div>
+        <div class="pay-s">Zaplat pri vyzvednuti u kantyny</div>
+      </div>
     </div>
-    <button class="ok-btn" id="OB" onclick="submitOrder()" disabled>
-      <span class="btxt">Potvrdit rezervaci</span><span class="sp">Odesílám...</span>
-    </button>
+    <button class="ok-btn" id="OB" onclick="submitOrder()" disabled>Potvrdit rezervaci</button>
   </div>
 </div>
 <div class="modal-bg" id="AM">
   <div class="modal">
-    <div class="modal-hd"><div class="modal-ht" id="MTIT">Admin</div><button class="drw-x" onclick="closeAdmin()">x</button></div>
+    <div class="modal-hd">
+      <div class="modal-ht" id="MTIT">Admin</div>
+      <button class="drw-x" onclick="closeAdmin()">x</button>
+    </div>
     <div class="modal-bd" id="MB"></div>
   </div>
 </div>
 <div class="toast" id="TT"></div>
 <script>
-var ADMIN_PW = 'kantyna2024';
 
+var ADMIN_PW = ‘kantyna2024’;
 var DNAMES = [‘Pondeli’,‘Utery’,‘Streda’,‘Ctvrtek’,‘Patek’];
 var BNAMES = [‘Mala prestávka’,‘Velka prestávka’];
 var todayI = (function(){ var d=new Date().getDay(); return (d>=1&&d<=5)?d-1:0; })();
-
 var MENU = [
-{id:1,lbl:‘Svacina’,       icon:‘🥪’,dsc:‘Cerstva denni svacina’,          pr:20, big:0,flv:0,qty:20},
-{id:2,lbl:‘Velka svacina’, icon:‘🍱’,dsc:‘Vetsi porce, vydatna a chutna’,  pr:50, big:1,flv:0,qty:20},
-{id:3,lbl:‘Stava 30ml’,    icon:‘🧃’,dsc:‘Cerstve lisovana stava 30ml’,    pr:130,big:0,flv:1,qty:15},
-{id:4,lbl:‘Stava 60ml’,    icon:‘🍹’,dsc:‘Cerstve lisovana stava 60ml’,    pr:220,big:1,flv:1,qty:15},
-{id:5,lbl:‘Obycejná hlava’,icon:‘🫙’,dsc:‘Klasicka hlava, osvedcena volba’,pr:90, big:0,flv:0,qty:15},
-{id:6,lbl:‘Lepsi hlava’,   icon:‘⭐’,dsc:‘Premiova hlava, o stupen vys’,   pr:110,big:1,flv:0,qty:15}
+{id:1,lbl:‘Svacina’,       icon:‘🥪’,dsc:‘Cerstva denni svacina’,           pr:20, big:0,flv:0,qty:20},
+{id:2,lbl:‘Velka svacina’, icon:‘🍱’,dsc:‘Vetsi porce, vydatna a chutna’,   pr:50, big:1,flv:0,qty:20},
+{id:3,lbl:‘Stava 30ml’,    icon:‘🧃’,dsc:‘Cerstve lisovana stava 30ml’,     pr:130,big:0,flv:1,qty:15},
+{id:4,lbl:‘Stava 60ml’,    icon:‘🍹’,dsc:‘Cerstve lisovana stava 60ml’,     pr:220,big:1,flv:1,qty:15},
+{id:5,lbl:‘Obycejná hlava’,icon:‘🫙’,dsc:‘Klasicka hlava, osvedcena volba’, pr:90, big:0,flv:0,qty:15},
+{id:6,lbl:‘Lepsi hlava’,   icon:‘⭐’,dsc:‘Premiova hlava, o stupen vys’,    pr:110,big:1,flv:0,qty:15}
 ];
+var _s={orders:[],stockOv:{},closed:[],favs:[],remins:[]};
+function lg(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function ls(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+_s.orders=lg(‘B_RES’,[]);_s.stockOv=lg(‘B_STK’,{});_s.closed=lg(‘B_CLS’,[]);_s.favs=lg(‘B_FAV’,[]);_s.remins=lg(‘B_REM’,[]);
+var nextId=1;
+for(var _i=0;_i<_s.orders.length;_i++) if(_s.orders[_i].id>=nextId) nextId=_s.orders[_i].id+1;
+var curDay=todayI,curBrk=0,cart=[],isAdmin=false,aTab=‘dash’,aFlt=‘all’;
+function el(id){return document.getElementById(id);}
+function inA(a,v){for(var i=0;i<a.length;i++) if(a[i]===v) return i; return -1;}
+function gQty(id){if(_s.stockOv[id]!==undefined) return _s.stockOv[id]; for(var i=0;i<MENU.length;i++) if(MENU[i].id===id) return MENU[i].qty; return 0;}
+function gItem(id){for(var i=0;i<MENU.length;i++) if(MENU[i].id===id) return MENU[i]; return null;}
+function gOrder(id){for(var i=0;i<_s.orders.length;i++) if(_s.orders[i].id===id) return _s.orders[i]; return null;}
+function toast(msg,type){var t=el(‘TT’);if(!t)return;t.textContent=msg;t.className=‘toast ‘+(type||‘ok’)+’ show’;clearTimeout(t._t);t._t=setTimeout(function(){t.className=‘toast’;},3000);}
+function pickBreak(n){curBrk=n;el(‘BM’).className=‘brk-opt’+(n===0?’ on’:’’);el(‘BV’).className=‘brk-opt’+(n===1?’ on’:’’);}
+function checkClosed(){var c=inA(_s.closed,curDay)!==-1;var cb=el(‘CB’);if(!cb)return;if(c){el(‘CT’).textContent=DNAMES[curDay]+’ - kantyna zavrena’;cb.className=‘closed-bar show’;el(‘OB’).disabled=true;}else{cb.className=‘closed-bar’;el(‘OB’).disabled=(cart.length===0);}}
+function renderDays(){var h=’’;for(var i=0;i<5;i++){var c=inA(_s.closed,i)!==-1;var cl=‘day-btn’+(i===curDay?’ active’:’’)+(c?’ cls’:’’);var dot=i===todayI?’<span class="today-dot"></span>’:’’;var sub=c?’<span style="font-size:.6rem;display:block;color:#c0392b">zavreno</span>’:’’;h+=’<button class="'+cl+'" onclick="pickDay('+i+')">’+DNAMES[i]+dot+sub+’</button>’;}el(‘DR’).innerHTML=h;}
+function pickDay(i){curDay=i;renderDays();renderMenu();checkClosed();}
+function renderMenu(){var mc=el(‘MC’);if(mc)mc.textContent=MENU.length+’ polozek’;var h=’’;for(var i=0;i<MENU.length;i++){var it=MENU[i];var av=gQty(it.id);var inC=false,cIt=null;for(var j=0;j<cart.length;j++) if(cart[j].id===it.id&&cart[j].day===curDay){inC=true;cIt=cart[j];break;}var pct=Math.min(100,Math.max(0,Math.round((av/20)*100)));var low=av<=5,sout=av<=0;var fh=’’;if(it.flv&&!sout){var fv=cIt&&cIt.flv?cIt.flv.replace(/”/g,’’):’’;fh=’<div class="flv-box"><label class="flv-lbl">Chut / prichut</label><input class="flv-inp" id="FI'+it.id+'_'+curDay+'" type="text" placeholder="napr. pomeranc, jahoda..." value="'+fv+'" oninput="updFlv('+it.id+','+curDay+',this.value)"/></div>’;}var isFav=inA(*s.favs,it.id)!==-1;var remK=it.id+’*’+curDay;var isRem=inA(*s.remins,remK)!==-1;var addTxt=inC?’✓’:’+’;h+=’<div class="card'+(sout?' sout':'')+'"><div class="card-img">’+it.icon+’<span class="'+(it.big?'cbadge l':'cbadge s')+'">’+(it.big?‘velka’:‘mala’)+’</span></div><div class="card-body"><div class="card-name">’+it.lbl+’</div><div class="card-desc">’+it.dsc+’</div><div class="stock-row"><span>Dostupnost</span><span>’+av+’ ks</span></div><div class="stock-bar"><div class="stock-fill'+(low?' low':'')+'" style="width:'+pct+'%"></div></div>’+fh+’<div class="card-footer"><div class="card-price">’+it.pr+’ <sub>Kc</sub></div><div class="card-btns"><button class="fav-btn'+(isFav?' on':'')+'" onclick="togFav('+it.id+')">❤</button><button class="rem-btn'+(isRem?' on':'')+'" onclick="togRem('+it.id+','+curDay+')">🔔</button><button class="add-btn'+(inC?' on':'')+'" onclick="addToCart('+it.id+')">’+addTxt+’</button></div></div></div></div>’;}el(‘MG’).innerHTML=h;}
+function addToCart(id){var it=gItem(id);if(!it)return;var ex=null;for(var i=0;i<cart.length;i++) if(cart[i].id===id&&cart[i].day===curDay){ex=cart[i];break;}var fel=el(‘FI’+id+’*’+curDay);var fv=fel?fel.value:’’;if(ex){ex.qty++;if(fv)ex.flv=fv;}else cart.push({id:id,lbl:it.lbl,icon:it.icon,pr:it.pr,day:curDay,dayN:DNAMES[curDay],qty:1,flv:fv});updCart();renderMenu();toast(it.icon+’ ‘+it.lbl+’ pridana!’,‘ok’);}
+function updFlv(id,day,v){for(var i=0;i<cart.length;i++) if(cart[i].id===id&&cart[i].day===day){cart[i].flv=v;break;}}
+function chgQty(id,day,d){for(var i=0;i<cart.length;i++){if(cart[i].id===id&&cart[i].day===day){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);break;}}updCart();}
+function updCart(){var tot=0,cnt=0;for(var i=0;i<cart.length;i++){tot+=cart[i].pr*cart[i].qty;cnt+=cart[i].qty;}el(‘CN’).textContent=cnt;el(‘TV’).textContent=tot+’ Kc’;var c=inA(_s.closed,curDay)!==-1;el(‘OB’).disabled=(cart.length===0||c);var bd=el(‘DB’);if(!cart.length){bd.innerHTML=’<div class="cart-empty"><div style="font-size:2.5rem;margin-bottom:.75rem">🛒</div><p>Kosik je prazdny</p></div>’;return;}var h=’’;for(var k=0;k<cart.length;k++){var ci=cart[k];h+=’<div class="ci"><div class="ci-ic">’+ci.icon+’</div><div class="ci-info"><div class="ci-nm">’+ci.lbl+’</div><div class="ci-mt">’+ci.dayN+’ - ‘+ci.pr+’ Kc/ks</div>’+(ci.flv?’<div class="ci-fl">Chut: ‘+ci.flv+’</div>’:’’)+’</div><div class="ci-ctrl"><button class="ci-qb" onclick="chgQty('+ci.id+','+ci.day+',-1)">-</button><span class="ci-q">’+ci.qty+’</span><button class="ci-qb" onclick="chgQty('+ci.id+','+ci.day+',1)">+</button></div><div class="ci-pr">’+(ci.pr*ci.qty)+’ Kc</div></div>’;}bd.innerHTML=h;}
+function openCart(){el(‘DW’).classList.add(‘open’);el(‘OV’).classList.add(‘open’);document.body.style.overflow=‘hidden’;updCart();}
+function closeCart(){el(‘DW’).classList.remove(‘open’);el(‘OV’).classList.remove(‘open’);document.body.style.overflow=’’;}
+function submitOrder(){var nm=el(‘SN’).value.trim();if(!nm){var inp=el(‘SN’);inp.className=‘inp err’;inp.focus();setTimeout(function(){inp.className=‘inp’;},1500);return;}var tot=0;for(var i=0;i<cart.length;i++) tot+=cart[i].pr*cart[i].qty;var now=new Date();var tm=now.toLocaleTimeString(‘cs-CZ’,{hour:‘2-digit’,minute:‘2-digit’});var dt=now.toLocaleDateString(‘cs-CZ’);var rid=nextId++;var rec={id:rid,name:nm,items:cart.slice(),total:tot,time:tm,date:dt,brk:BNAMES[curBrk],status:‘waiting’};for(var j=0;j<cart.length;j++){_s.stockOv[cart[j].id]=Math.max(0,gQty(cart[j].id)-cart[j].qty);}ls(‘B_STK’,_s.stockOv);_s.orders.push(rec);ls(‘B_RES’,_s.orders);cart=[];updCart();closeCart();renderRes();renderMenu();if(isAdmin)renderAdmin();toast(‘Rezervace ulozena!’,‘ok’);}
+function sbadge(s){if(s===‘ready’)return’<span class="sbadge sr">Pripraveno</span>’;if(s===‘done’)return’<span class="sbadge sd">Vydano</span>’;return’<span class="sbadge sw">Ceka</span>’;}
+function renderRes(){var re=el(‘RL’);var rc=el(‘RC’);if(rc)rc.textContent=_s.orders.length?_s.orders.length+’ rezervaci’:’’;if(!_s.orders.length){re.innerHTML=’<div class="res-empty"><div style="font-size:2rem;margin-bottom:.5rem">📋</div>Zatim zadne rezervace.</div>’;return;}var rws=’’;var rv=_s.orders.slice().reverse();for(var i=0;i<rv.length;i++){var r=rv[i];var its=[];for(var j=0;j<r.items.length;j++){var c=r.items[j];its.push(c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’));}rws+=’<tr><td><b>#’+r.id+’</b></td><td><b>’+r.name+’</b></td><td style="font-size:.78rem;color:#888">’+its.join(’, ‘)+’</td><td style="color:#2d6a4f;font-weight:600">’+r.total+’ Kc</td><td style="font-size:.72rem;color:#52b788">’+(r.brk||’’)+’</td><td>’+sbadge(r.status||‘waiting’)+’</td><td><button class="del-btn" onclick="delOrder('+r.id+')">🗑</button></td></tr>’;}re.innerHTML=’<table class="res-table"><thead><tr><th>#</th><th>Jmeno</th><th>Polozky</th><th>Cena</th><th>Prestávka</th><th>Stav</th><th></th></tr></thead><tbody>’+rws+’</tbody></table>’;}
+function delOrder(id){_s.orders=_s.orders.filter(function(r){return r.id!==id;});ls(‘B_RES’,_s.orders);renderRes();if(isAdmin)renderAdmin();toast(‘Rezervace zrusena’,‘err’);}
+function togFav(id){var idx=inA(_s.favs,id);if(idx!==-1)_s.favs.splice(idx,1);else _s.favs.push(id);ls(‘B_FAV’,_s.favs);renderMenu();renderFavs();toast(inA(_s.favs,id)!==-1?‘Pridano do oblibenych’:‘Odebrano’,‘ok’);}
+function renderFavs(){var bar=el(‘FR’);if(!bar)return;if(!_s.favs.length){bar.className=‘favs-row’;return;}bar.className=‘favs-row show’;var h=’’;for(var i=0;i<_s.favs.length;i++){var it=gItem(*s.favs[i]);if(!it)continue;h+=’<span class="fav-chip" onclick="addToCart('+it.id+')">’+it.icon+’ ‘+it.lbl+’ <span onclick="event.stopPropagation();togFav('+it.id+')" style="color:#bbb;font-size:.7rem;cursor:pointer">x</span></span>’;}el(‘FC’).innerHTML=h;}
+function togRem(id,day){var k=id+’*’+day;var idx=inA(_s.remins,k);if(idx!==-1){_s.remins.splice(idx,1);ls(‘B_REM’,_s.remins);renderMenu();toast(‘Pripominka zrusena’,‘err’);return;}if(!(‘Notification’ in window)){toast(‘Notifikace nepodporovany’,‘err’);return;}Notification.requestPermission().then(function(p){if(p===‘granted’){_s.remins.push(k);ls(‘B_REM’,_s.remins);renderMenu();var it=gItem(id);var t=new Date();t.setDate(t.getDate()+1);t.setHours(7,30,0,0);setTimeout(function(){new Notification(‘Bufet!’,{body:‘Nezapomen: ‘+it.lbl});},Math.max(t-new Date(),1000));toast(‘Pripominka nastavena!’,‘ok’);}else{toast(‘Notifikace zakazany’,‘err’);}});}
+function loadAnn(){var a=lg(‘B_ANN’,{});if(a.t){el(‘ATXT’).textContent=a.t;el(‘ABDY’).textContent=a.b||’’;el(‘AB’).className=‘ann-bar show’;}}
+function closeAnn(){el(‘AB’).className=‘ann-bar’;}
+function saveAnn(){var t=el(‘AINP’).value.trim();var b=el(‘AINP2’).value.trim();if(!t){toast(‘Zadej nadpis’,‘err’);return;}ls(‘B_ANN’,{t:t,b:b});el(‘ATXT’).textContent=t;el(‘ABDY’).textContent=b;el(‘AB’).className=‘ann-bar show’;toast(‘Oznameni zverejneno!’,‘ok’);renderAdmin();}
+function clearAnn(){try{localStorage.removeItem(‘B_ANN’);}catch(e){}el(‘AB’).className=‘ann-bar’;toast(‘Oznameni smazano’,‘err’);renderAdmin();}
+function openAdmin(){el(‘AM’).className=‘modal-bg open’;isAdmin?renderAdmin():renderLogin();}
+function closeAdmin(){el(‘AM’).className=‘modal-bg’;}
+function renderLogin(){el(‘MTIT’).textContent=‘Admin’;el(‘MB’).innerHTML=’<div class="login-box"><div class="login-ic">🔐</div><h3>Prihlaseni</h3><p>Zadej heslo pro pristup</p><label class="inp-l">Heslo</label><input class="inp" id="AP" type="password" placeholder="..." onkeydown="if(event.key===\'Enter\')tryLogin()" style="margin-bottom:.5rem"/><button class="ok-btn" onclick="tryLogin()">Prihlasit se</button><div class="login-err" id="LE">Spatne heslo</div></div>’;}
+function tryLogin(){if(el(‘AP’).value===ADMIN_PW){isAdmin=true;renderAdmin();}else{el(‘AP’).className=‘inp err’;el(‘LE’).style.display=‘block’;}}
+function renderAdmin(){el(‘MTIT’).textContent=‘Admin panel’;var tabs=[‘dash’,‘vydej’,‘res’,‘sklad’,‘set’];var lbls=[‘Dashboard’,‘Vydejna’,‘Rezervace’,‘Sklad’,‘Nastaveni’];var th=’’;for(var i=0;i<tabs.length;i++) th+=’<button class="tab'+(aTab===tabs[i]?' on':'')+'" onclick="doTab(\''+tabs[i]+'\')">’+lbls[i]+’</button>’;el(‘MB’).innerHTML=’<div class="tabs">’+th+’</div><div id="TC"></div><button class="a-logout" onclick="doLogout()">Odhlasit se</button>’;renderTab();}
+function doTab(t){aTab=t;renderAdmin();}
+function doLogout(){isAdmin=false;aTab=‘dash’;renderLogin();}
+function renderTab(){var e=el(‘TC’);if(aTab===‘dash’)rDash(e);else if(aTab===‘vydej’)rVydej(e);else if(aTab===‘res’)rRes(e);else if(aTab===‘sklad’)rSklad(e);else if(aTab===‘set’)rSet(e);}
+function rDash(e){var tRev=0,tItm=0;for(var i=0;i<_s.orders.length;i++){tRev+=_s.orders[i].total;for(var j=0;j<_s.orders[i].items.length;j++)tItm+=_s.orders[i].items[j].qty;}var todStr=new Date().toLocaleDateString(‘cs-CZ’);var todO=[],todR=0;for(var k=0;k<_s.orders.length;k++) if(_s.orders[k].date===todStr){todO.push(_s.orders[k]);todR+=_s.orders[k].total;}var pd=[0,0,0,0,0];for(var r=0;r<_s.orders.length;r++) for(var ii=0;ii<_s.orders[r].items.length;ii++) pd[_s.orders[r].items[ii].day]+=_s.orders[r].items[ii].qty;var mxPd=1;for(var p=0;p<5;p++) if(pd[p]>mxPd)mxPd=pd[p];var dns=[‘Po’,‘Ut’,‘St’,‘Ct’,‘Pa’],bars=’’;for(var b=0;b<5;b++){var hh=Math.round((pd[b]/mxPd)*100);bars+=’<div class="bar-c"><div class="bar-v">’+(pd[b]||’’)+’</div><div class="bar-f" style="height:'+hh+'%"></div><div class="bar-l">’+dns[b]+’</div></div>’;}var ic={};for(var ri=0;ri<_s.orders.length;ri++) for(var ij=0;ij<_s.orders[ri].items.length;ij++){var x=_s.orders[ri].items[ij];ic[x.id]=(ic[x.id]||0)+x.qty;}var ta=[];for(var tid in ic) ta.push({id:parseInt(tid),n:ic[tid]});ta.sort(function(a,b){return b.n-a.n;});ta=ta.slice(0,5);var mxT=ta.length?ta[0].n:1,toph=’’;for(var ti=0;ti<ta.length;ti++){var tit=gItem(ta[ti].id);if(!tit)continue;var rkCl=ti===0?‘top-rk g’:ti===1?‘top-rk s’:‘top-rk’;toph+=’<div class="top-r"><div class="'+rkCl+'">’+(ti+1)+’</div><div class="top-nm">’+tit.icon+’ ‘+tit.lbl+’</div><div class="top-bw"><div class="top-bf" style="width:'+Math.round((ta[ti].n/mxT)*100)+'%"></div></div><div class="top-ct">’+ta[ti].n+’ ks</div></div>’;}e.innerHTML=’<div class="dash-stats"><div class="ds"><div class="ds-n">’+_s.orders.length+’</div><div class="ds-l">Rezervaci</div></div><div class="ds"><div class="ds-n">’+tRev+’ Kc</div><div class="ds-l">Trzba celkem</div></div><div class="ds"><div class="ds-n">’+tItm+’</div><div class="ds-l">Svacin</div></div><div class="ds"><div class="ds-n">’+todR+’ Kc</div><div class="ds-l">Dnes</div><div class="ds-s">’+todO.length+’ rezervaci</div></div></div><div class="chart-box"><div class="chart-ttl">Objednavky podle dne</div><div class="bars">’+bars+’</div></div><div class="top-box"><div class="chart-ttl">Nejprodavanejsi</div>’+(toph||’<div class="a-empty">Zatim zadna data</div>’)+’</div>’;}
+function rVydej(e){var sq=’’;try{var se=el(‘VS’);if(se)sq=se.value.toLowerCase();}catch(err){}var pend=[],dn=[];for(var i=0;i<_s.orders.length;i++){var r=_s.orders[i];if(sq&&r.name.toLowerCase().indexOf(sq)===-1)continue;if(r.status===‘done’)dn.push(r);else pend.push(r);}var ph=’’;for(var j=0;j<pend.length;j++){var r=pend[j];var its=[];for(var k=0;k<r.items.length;k++){var c=r.items[k];its.push(c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’));}var st=r.status||‘waiting’,bt=’’;if(st===‘waiting’)bt+=’<button class="vy-b rdy" onclick="setStat('+r.id+',\'ready\')">Pripravit</button>’;if(st===‘ready’)bt+=’<button class="vy-b dn" onclick="setStat('+r.id+',\'done\')">Vydat</button>’;if(st!==‘waiting’)bt+=’<button class="vy-b un" onclick="setStat('+r.id+',\'waiting\')">zpet</button>’;ph+=’<div class="vy-row"><div class="vy-id">#’+r.id+’</div><div style="flex:1;min-width:0"><div class="vy-nm">’+r.name+’</div><div class="vy-it">’+its.join(’, ‘)+’</div><div class="vy-br">’+(r.brk||’’)+’ - ‘+r.total+’ Kc</div></div>’+sbadge(st)+’<div class="vy-btns">’+bt+’</div></div>’;}var dh=’’,dsl=dn.slice(-3).reverse();for(var di=0;di<dsl.length;di++){var dr=dsl[di];dh+=’<div class="vy-row" style="opacity:.5"><div class="vy-id">#’+dr.id+’</div><div style="flex:1"><div class="vy-nm">’+dr.name+’</div></div>’+sbadge(‘done’)+’<button class="vy-b un" onclick="setStat('+dr.id+',\'waiting\')">zpet</button></div>’;}e.innerHTML=’<div class="vy-s"><input class="vy-i" id="VS" placeholder="Hledat podle jmena..." oninput="rVydej(document.getElementById(\'TC\'))" value="'+sq+'"/></div><div class="a-lbl">Nevydane (’+pend.length+’)</div>’+(ph||’<div class="a-empty">Vse vydano!</div>’)+(dn.length?’<div class="a-lbl" style="margin-top:1rem">Posledne vydane</div>’+dh:’’);}
+function setStat(id,s){var r=gOrder(id);if(!r)return;r.status=s;ls(‘B_RES’,_s.orders);renderRes();renderAdmin();}
+function rRes(e){var flt=[];for(var i=0;i<_s.orders.length;i++){if(aFlt===‘all’){flt.push(_s.orders[i]);continue;}for(var j=0;j<_s.orders[i].items.length;j++) if(_s.orders[i].items[j].day===parseInt(aFlt)){flt.push(_s.orders[i]);break;}}var bh=’<button class="afb'+(aFlt==='all'?' on':'')+'" onclick="doFlt(\'all\')">Vsechny dny</button>’;for(var d=0;d<5;d++) bh+=’<button class="afb'+(aFlt==d?' on':'')+'" onclick="doFlt('+d+')">’+DNAMES[d]+’</button>’;var rh=’’,rv=flt.slice().reverse();for(var ri=0;ri<rv.length;ri++){var r=rv[ri];var its=[];for(var ii=0;ii<r.items.length;ii++){var c=r.items[ii];its.push(c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’));}rh+=’<div class="ares-row"><div class="ares-top"><div><div class="ares-nm">’+r.name+’</div><div class="ares-id">#’+r.id+’</div></div><div class="ares-pr">’+r.total+’ Kc</div></div><div class="ares-it">’+its.join(’, ‘)+’</div><div class="ares-bt"><span class="ares-tm">’+r.date+’ v ‘+r.time+’ - ‘+(r.brk||’’)+’</span><button class="ares-dl" onclick="delOrder('+r.id+')">Zrusit</button></div></div>’;}e.innerHTML=’<div class="af">’+bh+’</div>’+(rh||’<div class="a-empty">Zadne rezervace</div>’);}
+function doFlt(f){aFlt=f;renderAdmin();}
+function rSklad(e){var h=’<div style="font-size:.78rem;color:#888;margin-bottom:1rem">Uprav zasoby.</div>’;for(var i=0;i<MENU.length;i++){var it=MENU[i],av=gQty(it.id);var pct=Math.min(100,Math.max(0,Math.round((av/20)*100)));h+=’<div class="sm-row"><div class="sm-em">’+it.icon+’</div><div class="sm-info"><div class="sm-nm">’+it.lbl+’</div><div class="sm-bar"><div class="sm-bf'+(av<=5?' low':'')+'" style="width:'+pct+'%"></div></div><div class="sm-st">’+av+’ ks</div></div><div class="sm-ctrl"><button class="sm-btn" onclick="adjStk('+it.id+',-1)">-</button><span class="sm-val">’+av+’</span><button class="sm-btn" onclick="adjStk('+it.id+',1)">+</button><button class="sm-btn" onclick="rstStk('+it.id+')" style="font-size:.65rem;color:#bbb">r</button></div></div>’;}e.innerHTML=h;}
+function adjStk(id,d){_s.stockOv[id]=Math.max(0,gQty(id)+d);ls(‘B_STK’,_s.stockOv);renderMenu();rSklad(el(‘TC’));}
+function rstStk(id){delete _s.stockOv[id];ls(‘B_STK’,_s.stockOv);renderMenu();rSklad(el(‘TC’));}
+function rSet(e){var ann=lg(‘B_ANN’,{}),cdh=’’;for(var d=0;d<5;d++){var chk=inA(_s.closed,d)!==-1;cdh+=’<div class="cd-row"><span class="cd-nm">’+DNAMES[d]+’</span><label class="cd-tog"><input type=“checkbox” ‘+(chk?‘checked’:’’)+’ onchange=“togClosed(’+d+’,this.checked)”><span class="cd-sl"></span></label></div>’;}e.innerHTML=’<div class="a-lbl">Oznameni pro zaky</div><div class="ann-form"><input class="ann-inp" id="AINP" placeholder="Nadpis oznameni" value="'+(ann.t||'')+'"/><textarea class="ann-inp" id="AINP2" rows="3" placeholder="Text...">’+(ann.b||’’)+’</textarea><div class="ann-btns"><button class="ann-sv" onclick="saveAnn()">Zverejnit</button><button class="ann-cl" onclick="clearAnn()">Smazat</button></div></div><div class="a-lbl" style="margin-top:1.5rem">Uzavreni kantyny</div>’+cdh;}
+function togClosed(day,v){var idx=inA(_s.closed,day);if(v){if(idx===-1)_s.closed.push(day);}else{if(idx!==-1)_s.closed.splice(idx,1);}ls(‘B_CLS’,_s.closed);renderDays();checkClosed();toast(v?DNAMES[day]+’ uzavren’:DNAMES[day]+’ otevreny’,v?‘err’:‘ok’);}
+function initApp(){renderDays();renderMenu();renderRes();renderFavs();updCart();checkClosed();loadAnn();}
+document.addEventListener(‘DOMContentLoaded’,initApp);
 
-var curDay  = todayI;
-var curBrk  = 0;
-var cart    = [];
-var orders  = [];
-var stockOv = {};
-var closed  = [];
-var favs    = [];
-var remins  = [];
-var nextId  = 1;
-var isAdmin = false;
-var aTab    = ‘dash’;
-var aFlt    = ‘all’;
-
-try{ orders  = JSON.parse(localStorage.getItem(‘B_RES’)||’[]’); }catch(e){ orders=[]; }
-try{ stockOv = JSON.parse(localStorage.getItem(‘B_STK’)||’{}’); }catch(e){ stockOv={}; }
-try{ closed  = JSON.parse(localStorage.getItem(‘B_CLS’)||’[]’); }catch(e){ closed=[]; }
-try{ favs    = JSON.parse(localStorage.getItem(‘B_FAV’)||’[]’); }catch(e){ favs=[]; }
-try{ remins  = JSON.parse(localStorage.getItem(‘B_REM’)||’[]’); }catch(e){ remins=[]; }
-
-if(orders.length){
-var _mx=0;
-for(var _i=0;_i<orders.length;_i++) if(orders[_i].id>_mx) _mx=orders[_i].id;
-nextId = _mx+1;
-}
-
-function sv(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
-function getQty(id){
-if(stockOv[id]!==undefined) return stockOv[id];
-for(var i=0;i<MENU.length;i++) if(MENU[i].id===id) return MENU[i].qty;
-return 0;
-}
-function getItem(id){ for(var i=0;i<MENU.length;i++) if(MENU[i].id===id) return MENU[i]; return null; }
-function getOrder(id){ for(var i=0;i<orders.length;i++) if(orders[i].id===id) return orders[i]; return null; }
-
-function pickBreak(n){
-curBrk = n;
-document.getElementById(‘BM’).className = ‘brk-opt’+(n===0?’ on’:’’);
-document.getElementById(‘BV’).className = ‘brk-opt’+(n===1?’ on’:’’);
-}
-
-function checkClosed(){
-var isCls=false;
-for(var i=0;i<closed.length;i++) if(closed[i]===curDay){ isCls=true; break; }
-var cb = document.getElementById(‘CB’);
-if(isCls){
-document.getElementById(‘CT’).textContent = DNAMES[curDay]+’ - kantyna zavrena’;
-cb.className=‘closed-bar show’;
-document.getElementById(‘OB’).disabled=true;
-} else {
-cb.className=‘closed-bar’;
-document.getElementById(‘OB’).disabled=(cart.length===0);
-}
-}
-
-function renderDays(){
-var h=’’;
-for(var i=0;i<5;i++){
-var isCls=false; for(var j=0;j<closed.length;j++) if(closed[j]===i){ isCls=true; break; }
-var cl=‘day-btn’+(i===curDay?’ active’:’’)+(isCls?’ cls’:’’);
-var dot=i===todayI?’<span class="today-dot"></span>’:’’;
-var sub=isCls?’<span style="font-size:.6rem;display:block;color:#c0392b">zavreno</span>’:’’;
-h+=’<button class="'+cl+'" onclick="pickDay('+i+')">’+DNAMES[i]+dot+sub+’</button>’;
-}
-document.getElementById(‘DR’).innerHTML=h;
-}
-
-function pickDay(i){ curDay=i; renderDays(); renderMenu(); checkClosed(); }
-
-function renderMenu(){
-document.getElementById(‘MC’).textContent=MENU.length+’ polozek’;
-var h=’’;
-for(var i=0;i<MENU.length;i++){
-var it=MENU[i];
-var avail=getQty(it.id);
-var inC=false, cIt=null;
-for(var j=0;j<cart.length;j++) if(cart[j].id===it.id&&cart[j].day===curDay){ inC=true; cIt=cart[j]; break; }
-var pct=Math.min(100,Math.max(0,Math.round((avail/20)*100)));
-var low=avail<=5, sout=avail<=0;
-var fh=’’;
-if(it.flv&&!sout){
-var fv=cIt&&cIt.flv?cIt.flv.replace(/”/g,’’):’’;
-fh=’<div class="flv-box"><label class="flv-lbl">Chut / prichut</label>’
-+’<input class=“flv-inp” id=“FI’+it.id+’*’+curDay+’” type=“text” placeholder=“napr. pomeranc, jahoda…” value=”’+fv+’”’
-+’ oninput=“updFlv(’+it.id+’,’+curDay+’,this.value)”/></div>’;
-}
-var isFav=false; for(var k=0;k<favs.length;k++) if(favs[k]===it.id){ isFav=true; break; }
-var remK=it.id+’*’+curDay;
-var isRem=false; for(var m=0;m<remins.length;m++) if(remins[m]===remK){ isRem=true; break; }
-var cardCls=‘card’+(sout?’ sout’:’’);
-var bdgCls=it.big?‘cbadge l’:‘cbadge s’;
-var bdgTxt=it.big?‘velka’:‘mala’;
-var addTxt=inC?’✓’:’+’;
-h+=’<div class="'+cardCls+'">’
-+’<div class="card-img">’+it.icon+’<span class="'+bdgCls+'">’+bdgTxt+’</span></div>’
-+’<div class="card-body">’
-+’<div class="card-name">’+it.lbl+’</div>’
-+’<div class="card-desc">’+it.dsc+’</div>’
-+’<div class="stock-row"><span>Dostupnost</span><span>’+avail+’ ks</span></div>’
-+’<div class="stock-bar"><div class="stock-fill'+(low?' low':'')+'" style="width:'+pct+'%"></div></div>’
-+fh
-+’<div class="card-footer">’
-+’<div class="card-price">’+it.pr+’ <sub>Kc</sub></div>’
-+’<div class="card-btns">’
-+’<button class="fav-btn'+(isFav?' on':'')+'" onclick="togFav('+it.id+')">❤</button>’
-+’<button class="rem-btn'+(isRem?' on':'')+'" onclick="togRem('+it.id+','+curDay+')">🔔</button>’
-+’<button class="add-btn'+(inC?' on':'')+'" onclick="addToCart('+it.id+')">’+addTxt+’</button>’
-+’</div></div></div></div>’;
-}
-document.getElementById(‘MG’).innerHTML=h;
-}
-
-function addToCart(id){
-var it=getItem(id);
-if(!it) return;
-var ex=null; for(var i=0;i<cart.length;i++) if(cart[i].id===id&&cart[i].day===curDay){ ex=cart[i]; break; }
-var fel=document.getElementById(‘FI’+id+’_’+curDay);
-var fv=fel?fel.value:’’;
-if(ex){ ex.qty++; if(fv) ex.flv=fv; }
-else cart.push({id:id,lbl:it.lbl,icon:it.icon,pr:it.pr,day:curDay,dayN:DNAMES[curDay],qty:1,flv:fv});
-updCart(); renderMenu();
-toast(it.icon+’ ‘+it.lbl+’ pridana!’,‘ok’);
-}
-
-function updFlv(id,day,v){
-for(var i=0;i<cart.length;i++) if(cart[i].id===id&&cart[i].day===day){ cart[i].flv=v; break; }
-}
-
-function chgQty(id,day,d){
-for(var i=0;i<cart.length;i++){
-if(cart[i].id===id&&cart[i].day===day){
-cart[i].qty+=d;
-if(cart[i].qty<=0) cart.splice(i,1);
-break;
-}
-}
-updCart();
-}
-
-function updCart(){
-var tot=0,cnt=0;
-for(var i=0;i<cart.length;i++){ tot+=cart[i].pr*cart[i].qty; cnt+=cart[i].qty; }
-document.getElementById(‘CN’).textContent=cnt;
-document.getElementById(‘TV’).textContent=tot+’ Kc’;
-var isCls=false; for(var j=0;j<closed.length;j++) if(closed[j]===curDay){ isCls=true; break; }
-document.getElementById(‘OB’).disabled=(cart.length===0||isCls);
-var bd=document.getElementById(‘DB’);
-if(!cart.length){
-bd.innerHTML=’<div class="cart-empty"><div style="font-size:2.5rem;margin-bottom:.75rem">🛒</div><p>Kosik je prazdny</p></div>’;
-return;
-}
-var h=’’;
-for(var k=0;k<cart.length;k++){
-var c=cart[k];
-h+=’<div class="ci">’
-+’<div class="ci-ic">’+c.icon+’</div>’
-+’<div class="ci-info"><div class="ci-nm">’+c.lbl+’</div><div class="ci-mt">’+c.dayN+’ - ‘+c.pr+’ Kc/ks</div>’
-+(c.flv?’<div class="ci-fl">Chut: ‘+c.flv+’</div>’:’’)
-+’</div>’
-+’<div class="ci-ctrl">’
-+’<button class="ci-qb" onclick="chgQty('+c.id+','+c.day+',-1)">-</button>’
-+’<span class="ci-q">’+c.qty+’</span>’
-+’<button class="ci-qb" onclick="chgQty('+c.id+','+c.day+',1)">+</button>’
-+’</div>’
-+’<div class="ci-pr">’+(c.pr*c.qty)+’ Kc</div>’
-+’</div>’;
-}
-bd.innerHTML=h;
-}
-
-function openCart(){
-document.getElementById(‘DW’).classList.add(‘open’);
-document.getElementById(‘OV’).classList.add(‘open’);
-document.body.style.overflow=‘hidden’;
-updCart();
-}
-function closeCart(){
-document.getElementById(‘DW’).classList.remove(‘open’);
-document.getElementById(‘OV’).classList.remove(‘open’);
-document.body.style.overflow=’’;
-}
-
-function submitOrder(){
-var nm=document.getElementById(‘SN’).value.trim();
-if(!nm){
-var inp=document.getElementById(‘SN’);
-inp.className=‘inp err’; inp.focus();
-setTimeout(function(){ inp.className=‘inp’; },1500);
-return;
-}
-var tot=0;
-for(var i=0;i<cart.length;i++) tot+=cart[i].pr*cart[i].qty;
-var now=new Date();
-var tm=now.toLocaleTimeString(‘cs-CZ’,{hour:‘2-digit’,minute:‘2-digit’});
-var dt=now.toLocaleDateString(‘cs-CZ’);
-var rid=nextId++;
-var brkLbl=BNAMES[curBrk];
-var rec={id:rid,name:nm,items:cart.slice(),total:tot,time:tm,date:dt,brk:brkLbl,status:‘waiting’};
-var btn=document.getElementById(‘OB’);
-btn.className=‘ok-btn loading’; btn.disabled=true;
-for(var j=0;j<cart.length;j++){
-var cur=getQty(cart[j].id);
-stockOv[cart[j].id]=Math.max(0,cur-cart[j].qty);
-}
-sv(‘B_STK’,stockOv);
-var lines=[];
-for(var k=0;k<cart.length;k++){
-var c=cart[k];
-lines.push(’- ‘+c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’)+’ (’+c.dayN+’) = ’+(c.pr*c.qty)+’ Kc’);
-}
-var msg=‘REZERVACE #’+rid+’\nJmeno: ‘+nm+’\nDatum: ‘+dt+’ v ‘+tm+’\nPrestávka: ‘+brkLbl+’\n\n’+lines.join(’\n’)+’\n\nCelkem: ‘+tot+’ Kc’;
-orders.push(rec); sv(‘B_RES’,orders);
-cart=[]; updCart(); closeCart(); renderRes(); renderMenu();
-if(isAdmin) renderAdmin();
-btn.className=‘ok-btn’; btn.disabled=false;
-toast(‘Rezervace potvrzena!’,‘ok’);
-}
-
-function sbadge(s){
-if(s===‘ready’) return ‘<span class="sbadge sr">Pripraveno</span>’;
-if(s===‘done’)  return ‘<span class="sbadge sd">Vydano</span>’;
-return ‘<span class="sbadge sw">Ceka</span>’;
-}
-
-function renderRes(){
-var el=document.getElementById(‘RL’);
-document.getElementById(‘RC’).textContent=orders.length?orders.length+’ rezervaci’:’’;
-if(!orders.length){
-el.innerHTML=’<div class="res-empty"><div style="font-size:2rem;margin-bottom:.5rem">📋</div>Zatim zadne rezervace.</div>’;
-return;
-}
-var rws=’’;
-var rv=orders.slice().reverse();
-for(var i=0;i<rv.length;i++){
-var r=rv[i];
-var its=[];
-for(var j=0;j<r.items.length;j++){
-var c=r.items[j];
-its.push(c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’));
-}
-rws+=’<tr>’
-+’<td><span style="font-weight:700;font-size:.8rem">#’+r.id+’</span></td>’
-+’<td><span style="font-weight:600">’+r.name+’</span></td>’
-+’<td style="font-size:.78rem;color:#888;max-width:200px">’+its.join(’, ‘)+’</td>’
-+’<td style="font-family:\'Instrument Serif\',serif;color:#2d6a4f">’+r.total+’ Kc</td>’
-+’<td style="font-size:.72rem;color:#52b788;font-weight:600">’+(r.brk||’’)+’</td>’
-+’<td>’+sbadge(r.status||‘waiting’)+’</td>’
-+’<td><button class="del-btn" onclick="delOrder('+r.id+')">🗑</button></td>’
-+’</tr>’;
-}
-el.innerHTML=’<table class="res-table"><thead><tr><th>#</th><th>Jmeno</th><th>Polozky</th><th>Cena</th><th>Prestávka</th><th>Stav</th><th></th></tr></thead><tbody>’+rws+’</tbody></table>’;
-}
-
-function delOrder(id){
-orders=orders.filter(function(r){ return r.id!==id; });
-sv(‘B_RES’,orders); renderRes();
-if(isAdmin) renderAdmin();
-toast(‘Rezervace zrusena’,‘err’);
-}
-
-function togFav(id){
-var idx=-1; for(var i=0;i<favs.length;i++) if(favs[i]===id){ idx=i; break; }
-if(idx!==-1) favs.splice(idx,1); else favs.push(id);
-sv(‘B_FAV’,favs); renderMenu(); renderFavs();
-var nowIn=false; for(var j=0;j<favs.length;j++) if(favs[j]===id){ nowIn=true; break; }
-toast(nowIn?‘Pridano do oblibenych’:‘Odebrano z oblibenych’,nowIn?‘ok’:‘err’);
-}
-
-function renderFavs(){
-var bar=document.getElementById(‘FR’);
-if(!favs.length){ bar.className=‘favs-row’; return; }
-bar.className=‘favs-row show’;
-var h=’’;
-for(var i=0;i<favs.length;i++){
-var it=getItem(favs[i]);
-if(!it) continue;
-h+=’<span class="fav-chip" onclick="addToCart('+it.id+')">’
-+it.icon+’ ‘+it.lbl
-+’ <span onclick="event.stopPropagation();togFav('+it.id+')" style="color:#bbb;font-size:.7rem;cursor:pointer">x</span>’
-+’</span>’;
-}
-document.getElementById(‘FC’).innerHTML=h;
-}
-
-function togRem(id,day){
-var k=id+’_’+day;
-var idx=-1; for(var i=0;i<remins.length;i++) if(remins[i]===k){ idx=i; break; }
-if(idx!==-1){
-remins.splice(idx,1); sv(‘B_REM’,remins); renderMenu();
-toast(‘Pripominka zrusena’,‘err’); return;
-}
-if(!(‘Notification’ in window)){ toast(‘Prohlizec nepodporuje notifikace’,‘err’); return; }
-Notification.requestPermission().then(function(p){
-if(p===‘granted’){
-remins.push(k); sv(‘B_REM’,remins); renderMenu();
-var it=getItem(id);
-var t=new Date(); t.setDate(t.getDate()+1); t.setHours(7,30,0,0);
-var ms=t-new Date();
-setTimeout(function(){ new Notification(‘Bufet!’,{body:’Nezapomen: ’+it.lbl}); },Math.max(ms,1000));
-toast(‘Pripominka na zitra 7:30!’,‘ok’);
-} else { toast(‘Notifikace nejsou povoleny’,‘err’); }
-});
-}
-
-function loadAnn(){
-try{
-var a=JSON.parse(localStorage.getItem(‘B_ANN’)||’{}’);
-if(a.t){
-document.getElementById(‘ATXT’).textContent=a.t;
-document.getElementById(‘ABDY’).textContent=a.b||’’;
-document.getElementById(‘AB’).className=‘ann-bar show’;
-}
-}catch(e){}
-}
-function closeAnn(){ document.getElementById(‘AB’).className=‘ann-bar’; }
-
-function saveAnn(){
-var t=document.getElementById(‘AINP’).value.trim();
-var b=document.getElementById(‘AINP2’).value.trim();
-if(!t){ toast(‘Zadej nadpis’,‘err’); return; }
-sv(‘B_ANN’,{t:t,b:b});
-document.getElementById(‘ATXT’).textContent=t;
-document.getElementById(‘ABDY’).textContent=b;
-document.getElementById(‘AB’).className=‘ann-bar show’;
-toast(‘Oznameni zverejneno!’,‘ok’);
-renderAdmin();
-}
-function clearAnn(){
-try{ localStorage.removeItem(‘B_ANN’); }catch(e){}
-document.getElementById(‘AB’).className=‘ann-bar’;
-toast(‘Oznameni smazano’,‘err’);
-renderAdmin();
-}
-
-function openAdmin(){ document.getElementById(‘AM’).className=‘modal-bg open’; isAdmin?renderAdmin():renderLogin(); }
-function closeAdmin(){ document.getElementById(‘AM’).className=‘modal-bg’; }
-
-function renderLogin(){
-document.getElementById(‘MTIT’).textContent=‘Admin’;
-document.getElementById(‘MB’).innerHTML=
-‘<div class="login-box">’
-+’<div class="login-ic">🔐</div>’
-+’<h3>Prihlaseni</h3>’
-+’<p>Zadej heslo pro pristup do administrace</p>’
-+’<label class="inp-l">Heslo</label>’
-+’<input class="inp" id="AP" type="password" placeholder="..." onkeydown="if(event.key===\'Enter\')tryLogin()" style="margin-bottom:.5rem"/>’
-+’<button class="ok-btn" onclick="tryLogin()"><span class="btxt">Prihlasit se</span><span class="sp">…</span></button>’
-+’<div class="login-err" id="LE">Spatne heslo</div>’
-+’</div>’;
-}
-
-function tryLogin(){
-if(document.getElementById(‘AP’).value===ADMIN_PW){ isAdmin=true; renderAdmin(); }
-else{ document.getElementById(‘AP’).className=‘inp err’; document.getElementById(‘LE’).style.display=‘block’; }
-}
-
-function renderAdmin(){
-document.getElementById(‘MTIT’).textContent=‘Admin panel’;
-var tabs=[‘dash’,‘vydej’,‘res’,‘sklad’,‘set’];
-var lbls=[‘Dashboard’,‘Vydejna’,‘Rezervace’,‘Sklad’,‘Nastaveni’];
-var th=’’;
-for(var i=0;i<tabs.length;i++) th+=’<button class="tab'+(aTab===tabs[i]?' on':'')+'" onclick="doTab(\''+tabs[i]+'\')">’+lbls[i]+’</button>’;
-document.getElementById(‘MB’).innerHTML=’<div class="tabs">’+th+’</div><div id="TC"></div><button class="a-logout" onclick="doLogout()">Odhlasit se</button>’;
-renderTab();
-}
-function doTab(t){ aTab=t; renderAdmin(); }
-function doLogout(){ isAdmin=false; aTab=‘dash’; renderLogin(); }
-
-function renderTab(){
-var el=document.getElementById(‘TC’);
-if(aTab===‘dash’)  renderDash(el);
-else if(aTab===‘vydej’) renderVydej(el);
-else if(aTab===‘res’)   renderResTab(el);
-else if(aTab===‘sklad’) renderSklad(el);
-else if(aTab===‘set’)   renderSet(el);
-}
-
-function renderDash(el){
-var tRev=0,tItm=0;
-for(var i=0;i<orders.length;i++){
-tRev+=orders[i].total;
-for(var j=0;j<orders[i].items.length;j++) tItm+=orders[i].items[j].qty;
-}
-var todStr=new Date().toLocaleDateString(‘cs-CZ’);
-var todO=[],todR=0;
-for(var k=0;k<orders.length;k++) if(orders[k].date===todStr){ todO.push(orders[k]); todR+=orders[k].total; }
-var pd=[0,0,0,0,0];
-for(var r=0;r<orders.length;r++)
-for(var ii=0;ii<orders[r].items.length;ii++)
-pd[orders[r].items[ii].day]+=orders[r].items[ii].qty;
-var mxPd=1; for(var p=0;p<5;p++) if(pd[p]>mxPd) mxPd=pd[p];
-var dns=[‘Po’,‘Ut’,‘St’,‘Ct’,‘Pa’];
-var bars=’’;
-for(var b=0;b<5;b++){
-var hh=Math.round((pd[b]/mxPd)*100);
-bars+=’<div class="bar-c"><div class="bar-v">’+(pd[b]||’’)+’</div><div class="bar-f" style="height:'+hh+'%"></div><div class="bar-l">’+dns[b]+’</div></div>’;
-}
-var ic={};
-for(var ri=0;ri<orders.length;ri++)
-for(var ij=0;ij<orders[ri].items.length;ij++){
-var x=orders[ri].items[ij];
-ic[x.id]=(ic[x.id]||0)+x.qty;
-}
-var ta=[];
-for(var tid in ic) ta.push({id:parseInt(tid),n:ic[tid]});
-ta.sort(function(a,b){ return b.n-a.n; });
-ta=ta.slice(0,5);
-var mxT=ta.length?ta[0].n:1;
-var toph=’’;
-for(var ti=0;ti<ta.length;ti++){
-var tit=getItem(ta[ti].id);
-if(!tit) continue;
-var rkCl=ti===0?‘top-rk g’:ti===1?‘top-rk s’:‘top-rk’;
-toph+=’<div class="top-r"><div class="'+rkCl+'">’+(ti+1)+’</div>’
-+’<div class="top-nm">’+tit.icon+’ ‘+tit.lbl+’</div>’
-+’<div class="top-bw"><div class="top-bf" style="width:'+Math.round((ta[ti].n/mxT)*100)+'%"></div></div>’
-+’<div class="top-ct">’+ta[ti].n+’ ks</div></div>’;
-}
-el.innerHTML=
-‘<div class="dash-stats">’
-+’<div class="ds"><div class="ds-n">’+orders.length+’</div><div class="ds-l">Rezervaci</div></div>’
-+’<div class="ds"><div class="ds-n">’+tRev+’ Kc</div><div class="ds-l">Trzba celkem</div></div>’
-+’<div class="ds"><div class="ds-n">’+tItm+’</div><div class="ds-l">Svacin</div></div>’
-+’<div class="ds"><div class="ds-n">’+todR+’ Kc</div><div class="ds-l">Dnes</div><div class="ds-s">’+todO.length+’ rezervaci</div></div>’
-+’</div>’
-+’<div class="chart-box"><div class="chart-ttl">Objednavky podle dne</div><div class="bars">’+bars+’</div></div>’
-+’<div class="top-box"><div class="chart-ttl">Nejprodavanejsi polozky</div>’+(toph||’<div class="a-empty">Zatim zadna data</div>’)+’</div>’;
-}
-
-function renderVydej(el){
-var sq=’’;
-try{ var se=document.getElementById(‘VS’); if(se) sq=se.value.toLowerCase(); }catch(e){}
-var pend=[],dn=[];
-for(var i=0;i<orders.length;i++){
-var r=orders[i];
-if(sq&&r.name.toLowerCase().indexOf(sq)===-1) continue;
-if(r.status===‘done’) dn.push(r); else pend.push(r);
-}
-var ph=’’;
-for(var j=0;j<pend.length;j++){
-var r=pend[j];
-var its=[]; for(var k=0;k<r.items.length;k++){ var c=r.items[k]; its.push(c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’)); }
-var st=r.status||‘waiting’;
-var bt=’’;
-if(st===‘waiting’) bt+=’<button class="vy-b rdy" onclick="setStat('+r.id+',\'ready\')">Pripravit</button>’;
-if(st===‘ready’)   bt+=’<button class="vy-b dn"  onclick="setStat('+r.id+',\'done\')">Vydat</button>’;
-if(st!==‘waiting’) bt+=’<button class="vy-b un"  onclick="setStat('+r.id+',\'waiting\')">zpet</button>’;
-ph+=’<div class="vy-row">’
-+’<div class="vy-id">#’+r.id+’</div>’
-+’<div style="flex:1;min-width:0"><div class="vy-nm">’+r.name+’</div><div class="vy-it">’+its.join(’, ‘)+’</div><div class="vy-br">’+(r.brk||’’)+’ - ‘+r.total+’ Kc</div></div>’
-+sbadge(st)
-+’<div class="vy-btns">’+bt+’</div>’
-+’</div>’;
-}
-var dh=’’;
-var dsl=dn.slice(-3).reverse();
-for(var di=0;di<dsl.length;di++){
-var dr=dsl[di];
-dh+=’<div class="vy-row" style="opacity:.5">’
-+’<div class="vy-id">#’+dr.id+’</div>’
-+’<div style="flex:1"><div class="vy-nm">’+dr.name+’</div></div>’
-+sbadge(‘done’)
-+’<button class="vy-b un" onclick="setStat('+dr.id+',\'waiting\')">zpet</button>’
-+’</div>’;
-}
-el.innerHTML=’<div class="vy-s"><input class="vy-i" id="VS" placeholder="Hledat podle jmena..." oninput="renderVydej(document.getElementById(\'TC\'))" value="'+sq+'"/></div>’
-+’<div class="a-lbl">Nevydane (’+pend.length+’)</div>’
-+(ph||’<div class="a-empty">Vse vydano!</div>’)
-+(dn.length?’<div class="a-lbl" style="margin-top:1rem">Posledne vydane</div>’+dh:’’);
-}
-
-function setStat(id,s){
-var r=getOrder(id); if(!r) return;
-r.status=s; sv(‘B_RES’,orders); renderRes(); renderAdmin();
-}
-
-function renderResTab(el){
-var flt=[];
-for(var i=0;i<orders.length;i++){
-if(aFlt===‘all’){ flt.push(orders[i]); continue; }
-for(var j=0;j<orders[i].items.length;j++) if(orders[i].items[j].day===parseInt(aFlt)){ flt.push(orders[i]); break; }
-}
-var bh=’<button class="afb'+(aFlt==='all'?' on':'')+'" onclick="doFlt(\'all\')">Vsechny dny</button>’;
-for(var d=0;d<5;d++) bh+=’<button class="afb'+(aFlt==d?' on':'')+'" onclick="doFlt('+d+')">’+DNAMES[d]+’</button>’;
-var rh=’’;
-var rv=flt.slice().reverse();
-for(var ri=0;ri<rv.length;ri++){
-var r=rv[ri];
-var its=[]; for(var ii=0;ii<r.items.length;ii++){ var c=r.items[ii]; its.push(c.qty+‘x ‘+c.lbl+(c.flv?’ (’+c.flv+’)’:’’)); }
-rh+=’<div class="ares-row">’
-+’<div class="ares-top"><div><div class="ares-nm">’+r.name+’</div><div class="ares-id">#’+r.id+’</div></div><div class="ares-pr">’+r.total+’ Kc</div></div>’
-+’<div class="ares-it">’+its.join(’, ‘)+’</div>’
-+’<div class="ares-bt"><span class="ares-tm">’+r.date+’ v ‘+r.time+’ - ‘+(r.brk||’’)+’</span><button class="ares-dl" onclick="delOrder('+r.id+')">Zrusit</button></div>’
-+’</div>’;
-}
-el.innerHTML=’<div class="af">’+bh+’</div>’+(rh||’<div class="a-empty">Zadne rezervace</div>’);
-}
-function doFlt(f){ aFlt=f; renderAdmin(); }
-
-function renderSklad(el){
-var h=’<div style="font-size:.78rem;color:#888;margin-bottom:1rem">Uprav zasoby. Vyprodane polozky se zablokuji.</div>’;
-for(var i=0;i<MENU.length;i++){
-var it=MENU[i]; var av=getQty(it.id);
-var pct=Math.min(100,Math.max(0,Math.round((av/20)*100)));
-h+=’<div class="sm-row">’
-+’<div class="sm-em">’+it.icon+’</div>’
-+’<div class="sm-info"><div class="sm-nm">’+it.lbl+’</div><div class="sm-bar"><div class="sm-bf'+(av<=5?' low':'')+'" style="width:'+pct+'%"></div></div><div class="sm-st">’+av+’ ks</div></div>’
-+’<div class="sm-ctrl">’
-+’<button class="sm-btn" onclick="adjStk('+it.id+',-1)">-</button>’
-+’<span class="sm-val">’+av+’</span>’
-+’<button class="sm-btn" onclick="adjStk('+it.id+',1)">+</button>’
-+’<button class="sm-btn" onclick="rstStk('+it.id+')" style="font-size:.65rem;color:#bbb">r</button>’
-+’</div></div>’;
-}
-el.innerHTML=h;
-}
-function adjStk(id,d){ stockOv[id]=Math.max(0,getQty(id)+d); sv(‘B_STK’,stockOv); renderMenu(); renderSklad(document.getElementById(‘TC’)); }
-function rstStk(id){ delete stockOv[id]; sv(‘B_STK’,stockOv); renderMenu(); renderSklad(document.getElementById(‘TC’)); }
-
-function renderSet(el){
-var ann={}; try{ ann=JSON.parse(localStorage.getItem(‘B_ANN’)||’{}’); }catch(e){}
-var cdh=’’;
-for(var d=0;d<5;d++){
-var chk=false; for(var i=0;i<closed.length;i++) if(closed[i]===d){ chk=true; break; }
-cdh+=’<div class="cd-row"><span class="cd-nm">’+DNAMES[d]+’</span><label class="cd-tog"><input type=“checkbox” ‘+(chk?‘checked’:’’)+’ onchange=“togClosed(’+d+’,this.checked)”><span class="cd-sl"></span></label></div>’;
-}
-el.innerHTML=
-‘<div class="a-lbl">Oznameni pro zaky</div>’
-+’<div class="ann-form">’
-+’<input class="ann-inp" id="AINP" placeholder="Nadpis oznameni" value="'+(ann.t||'')+'"/>’
-+’<textarea class="ann-inp" id="AINP2" rows="3" placeholder="Text oznameni...">’+(ann.b||’’)+’</textarea>’
-+’<div class="ann-btns"><button class="ann-sv" onclick="saveAnn()">Zverejnit</button><button class="ann-cl" onclick="clearAnn()">Smazat</button></div>’
-+’</div>’
-+’<div class="a-lbl" style="margin-top:1.5rem">Uzavreni kantyny</div>’
-+cdh;
-}
-
-function togClosed(day,v){
-var idx=-1; for(var i=0;i<closed.length;i++) if(closed[i]===day){ idx=i; break; }
-if(v){ if(idx===-1) closed.push(day); }
-else { if(idx!==-1) closed.splice(idx,1); }
-sv(‘B_CLS’,closed); renderDays(); checkClosed();
-toast(v?DNAMES[day]+’ uzavren’:DNAMES[day]+’ otevreny’,v?‘err’:‘ok’);
-}
-
-function toast(msg,type){
-var t=document.getElementById(‘TT’);
-t.textContent=msg; t.className=‘toast ‘+(type||‘ok’)+’ show’;
-clearTimeout(t._tt); t._tt=setTimeout(function(){ t.className=‘toast’; },3000);
-}
-
-function initApp(){
-renderDays();
-renderMenu();
-renderRes();
-renderFavs();
-updCart();
-checkClosed();
-loadAnn();
-}
-if(document.readyState === ‘loading’){
-document.addEventListener(‘DOMContentLoaded’, initApp);
-} else {
-initApp();
-}
 </script>
-
 </body>
 </html>
